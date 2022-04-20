@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   warehouse:
@@ -12,13 +12,30 @@ services:
 
   db:
     container_name: db
-    image: postgres
+    image: postgres:14.2
     environment:
       - POSTGRES_DB=micro_warehouse
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
     volumes:
       - pgdata:/var/lib/postgresql/data/
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:0.14.2
+    network_mode: bridge
+    privileged: true
+    ports:
+      - '4566:4566'
+    environment:
+      - SERVICES=${SERVICES- }
+      - DATA_DIR=/tmp/localstack
+      - LAMBDA_EXECUTOR=docker-reuse
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_EXECUTION_ENV=true
+    volumes:
+      - ".volume/tmp/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
 volumes:
   pgdata:
