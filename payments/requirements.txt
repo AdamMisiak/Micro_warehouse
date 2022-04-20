@@ -1,0 +1,4 @@
+databases[postgresql]==0.5.5
+fastapi==0.75.1
+httpx==0.22.0
+uvicorn==0.17.6
