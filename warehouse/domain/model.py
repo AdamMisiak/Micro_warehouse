@@ -10,9 +10,28 @@ class OrderLine:
     Immutable dataclass with no behaviour. 
     OrderLine is 'value equal' = two lines with the same values are equal.
     :order_id: id of the order
-    :sku: stock-keeping unit = identyfication of product
+    :sku: stock-keeping unit = identification of product
     :qty: quantity of products
     '''
     order_id: str
     sku: str
     qty: int
+
+
+class Batch:
+    '''
+    Batch object is the batch of stock ordered by purchasing department. 
+    :ref: unique ID
+    :sku: stock-keeping unit = identification of product
+    :qty: quantity of products
+    :eta: expected time of arrival
+    '''
+    def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
+        self.reference = ref
+        self.sku = sku
+        self.eta = eta
+        self._purchased_quantity = qty
+        self._allocations = set()  # type: Set[OrderLine]
+
+    def __repr__(self):
+        return f"<Batch {self.reference}>"
