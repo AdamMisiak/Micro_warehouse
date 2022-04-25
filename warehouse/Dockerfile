@@ -1,14 +1,14 @@
 FROM python:3.10-slim
 
-WORKDIR /app
+WORKDIR /warehouse
 
-COPY ./requirements.txt /app/requirements.txt
+COPY ./requirements.txt /warehouse/requirements.txt
 
 RUN apt-get update \
     && apt-get install gcc -y \
     && apt-get clean
 
-RUN pip install -r /app/requirements.txt \
+RUN pip install -r /warehouse/requirements.txt \
     && rm -rf /root/.cache/pip
 
-COPY . /app/
+COPY . /warehouse/
