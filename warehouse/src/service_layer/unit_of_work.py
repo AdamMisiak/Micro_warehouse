@@ -11,7 +11,7 @@ from src.adapters import repository
 
 class AbstractUnitOfWork(abc.ABC):
     '''
-    AbstractUnitOfWork is the Unit of Work patten.
+    AbstractUnitOfWork is the Unit of Work pattern.
     UoW pattern is abstraction over the idea of atomic operations. 
     '''
 
