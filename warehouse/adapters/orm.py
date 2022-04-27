@@ -10,7 +10,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import mapper, relationship
 
-from warehouse.src.domain import model
+from domain import model
 
 
 metadata = MetaData()

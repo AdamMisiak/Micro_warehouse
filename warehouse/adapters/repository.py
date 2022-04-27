@@ -1,6 +1,6 @@
 import abc
 from typing import Set
-from src.domain import model
+from domain import model
 
 
 class AbstractRepository(abc.ABC):
@@ -12,22 +12,22 @@ class AbstractRepository(abc.ABC):
     def __init__(self):
         self.seen = set()  # type: Set[model.Product]
 
-    def add(self, product: model.Product):
+    def add(self, product: model.Batch):
         self._add(product)
         self.seen.add(product)
 
-    def get(self, sku) -> model.Product:
+    def get(self, sku) -> model.Batch:
         product = self._get(sku)
         if product:
             self.seen.add(product)
         return product
 
     @abc.abstractmethod
-    def _add(self, product: model.Product):
+    def _add(self, product: model.Batch):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get(self, sku) -> model.Product:
+    def _get(self, sku) -> model.Batch:
         raise NotImplementedError
 
 
@@ -45,4 +45,4 @@ class SqlAlchemyRepository(AbstractRepository):
         self.session.add(product)
 
     def _get(self, sku):
-        return self.session.query(model.Product).filter_by(sku=sku).first()
+        return self.session.query(model.Batch).filter_by(sku=sku).first()
