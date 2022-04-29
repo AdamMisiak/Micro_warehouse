@@ -31,5 +31,5 @@ class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
 def test_add_batch_for_new_product():
     uow = FakeUnitOfWork()
     services.add_batch("batch1", "BIG-TABLE", 100, None, uow)
-    assert uow.products.get("BIG-TABLE") is not None
+    assert uow.batches.get("BIG-TABLE") is not None
     assert uow.committed
