@@ -8,5 +8,11 @@ build:
 up:
 	docker-compose up
 
+up-daemon:
+	docker-compose up -d
+
 down:
 	docker-compose down
+
+test: up-daemon
+	docker-compose run --rm --no-deps --entrypoint=pytest
