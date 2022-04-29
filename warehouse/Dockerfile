@@ -12,3 +12,5 @@ RUN pip install -r /warehouse/requirements.txt \
     && rm -rf /root/.cache/pip
 
 COPY . /warehouse/
+
+COPY tests/ /tests/
