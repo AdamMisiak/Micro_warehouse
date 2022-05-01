@@ -1,6 +1,6 @@
 import abc
 from typing import Set
-from warehouse.domain import model
+from domain import model
 
 
 class AbstractRepository(abc.ABC):
