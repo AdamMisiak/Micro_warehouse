@@ -4,8 +4,8 @@ from fastapi import FastAPI
 
 from datetime import datetime
 
-from adapters import orm
-from service_layer import services, unit_of_work
+from warehouse.adapters import orm
+from warehouse.service_layer import services, unit_of_work
 
 app = FastAPI()
 orm.start_mappers()

@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 from datetime import date
 
-from domain import model
+from warehouse.domain import model
 
 if TYPE_CHECKING:
     from . import unit_of_work

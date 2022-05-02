@@ -12,10 +12,11 @@ services:
 
   warehouse:
     container_name: warehouse
-    build: ./warehouse
-    command: uvicorn entrypoints.main:app --reload --host 0.0.0.0 --port 8000
+    build: .
+    command: uvicorn warehouse.entrypoints.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./warehouse/:/warehouse
+      - ./src:/src
+      - ./tests:/tests
     ports:
       - 8002:8000
 
