@@ -1,6 +1,27 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set
+from typing import Optional, List, Set
+from . import events
+
+
+class Product:
+    # need to add description
+    def __init__(self, sku: str, batches: List[Batch], version_number: int = 0):
+        self.sku = sku
+        self.batches = batches
+        self.version_number = version_number
+        self.events = []  # type: List[events.Event]
+
+    def allocate(self, line: OrderLine) -> str:
+        try:
+            batch = next(b for b in sorted(self.batches) if b.can_allocate(line))
+            batch.allocate(line)
+            self.version_number += 1
+            return batch.reference
+        except StopIteration:
+            self.events.append(events.OutOfStock(line.sku))
+            return None
 
 
 @dataclass(unsafe_hash=True)
@@ -50,3 +71,22 @@ class Batch:
         if other.eta is None:
             return True
         return self.eta > other.eta
+
+    def allocate(self, line: OrderLine):
+        if self.can_allocate(line):
+            self._allocations.add(line)
+
+    def deallocate(self, line: OrderLine):
+        if line in self._allocations:
+            self._allocations.remove(line)
+
+    @property
+    def allocated_quantity(self) -> int:
+        return sum(line.qty for line in self._allocations)
+
+    @property
+    def available_quantity(self) -> int:
+        return self._purchased_quantity - self.allocated_quantity
+
+    def can_allocate(self, line: OrderLine) -> bool:
+        return self.sku == line.sku and self.available_quantity >= line.qty
