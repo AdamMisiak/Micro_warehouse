@@ -1,30 +1,20 @@
 version: '3.8'
 
 services:
-  # payments:
-  #   container_name: payments
-  #   build: ./payments
-  #   command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-  #   volumes:
-  #     - ./payments/:/app
-  #   ports:
-  #     - 8001:8000
-
   warehouse:
     container_name: warehouse
-    build: .
-    command: uvicorn warehouse.entrypoints.main:app --reload --host 0.0.0.0 --port 8000
+    build: ./warehouse
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./src:/src
-      - ./tests:/tests
+      - ./warehouse:/warehouse
     ports:
       - 8002:8000
 
-  db:
-    container_name: db
+  warehouse_db:
+    container_name: warehouse_db
     image: postgres:14.2
     environment:
-      - POSTGRES_DB=micro_warehouse
+      - POSTGRES_DB=warehouse_db
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
     ports:
