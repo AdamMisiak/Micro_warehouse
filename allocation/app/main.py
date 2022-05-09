@@ -16,4 +16,4 @@ async def shutdown():
 
 app = FastAPI()
 
-app.include_router(batches)
+app.include_router(batches, prefix='/api/v1/batches', tags=['batches'])

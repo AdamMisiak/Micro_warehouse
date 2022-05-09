@@ -1,22 +1,22 @@
 version: '3.8'
 
 services:
-  warehouse:
-    container_name: warehouse
-    build: ./warehouse
+  allocation:
+    container_name: allocation
+    build: ./allocation
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./warehouse:/app
+      - ./allocation:/app
     ports:
       - 8002:8000
 
-  warehouse_db:
-    container_name: warehouse_db
+  allocation_db:
+    container_name: allocation_db
     image: postgres:14.1-alpine
     volumes:
-      - pg_data_warehouse:/var/lib/postgresql/data/
+      - pg_data_allocation:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=warehouse_db
+      - POSTGRES_DB=allocation_db
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
 
@@ -52,4 +52,4 @@ services:
 
 
 volumes:
-  pg_data_warehouse:
+  pg_data_allocation:
