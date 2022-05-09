@@ -8,3 +8,8 @@ class Batch(BaseModel):
     sku: str
     qty: str
     eta: Optional[date]
+
+class OrderLine(BaseModel):
+    order_id: str
+    sku: str
+    qty: int
