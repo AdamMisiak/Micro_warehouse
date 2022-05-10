@@ -4,12 +4,12 @@ from datetime import date
 
 
 class Batch(BaseModel):
-    ref: str
+    reference: str
     sku: str
-    qty: str
+    quantity: int
     eta: Optional[date]
 
 class OrderLine(BaseModel):
     order_id: str
     sku: str
-    qty: int
+    quantity: int
