@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.api.db import metadata, database, engine
 from app.api.batches import batches
+from app.api.order_lines import order_lines
 
 app = FastAPI()
 
@@ -17,3 +18,4 @@ async def shutdown():
 app = FastAPI()
 
 app.include_router(batches, prefix='/api/v1/batches', tags=['batches'])
+app.include_router(order_lines, prefix='/api/v1/orderlines', tags=['order_lines'])
