@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Optional
+# pylint: disable=too-few-public-methods
 from datetime import date
+from typing import Optional
+
+from pydantic import BaseModel
 
 
 class Batch(BaseModel):
@@ -8,6 +10,7 @@ class Batch(BaseModel):
     sku: str
     quantity: int
     eta: Optional[date]
+
 
 class OrderLine(BaseModel):
     order_id: str
