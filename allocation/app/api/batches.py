@@ -1,5 +1,6 @@
 from typing import List
 
+from app.adapters import repository
 from app.api import db_manager
 from app.domain.models import Batch
 from fastapi import APIRouter
@@ -15,4 +16,7 @@ async def create(payload: Batch):
 
 @batches.get("/", response_model=List[Batch])
 async def get():
-    return await db_manager.get_all_batches()
+    results = repository.SqlAlchemyRepository()
+    # print(batches.get_all())
+    return await results.get_all()
+    # return await db_manager.get_all_batches()
