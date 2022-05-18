@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   allocation:
-    container_name: allocation
-    build: ./allocation
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    container_name: test_allocation
+    build: ./test_allocation
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./allocation:/app
+      - ./test_allocation:/app
     ports:
-      - 8002:8000
+      - 8000:8000
 
   allocation_db:
     container_name: allocation_db
