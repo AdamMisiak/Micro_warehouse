@@ -4,7 +4,7 @@ from sqlalchemy import Column, Date, Integer, String
 from .database import Base
 
 
-class Item(Base):
+class Batch(Base):
     __tablename__ = "batches"
 
     id = Column(Integer, primary_key=True, index=True)

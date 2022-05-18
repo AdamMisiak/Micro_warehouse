@@ -2,11 +2,11 @@
 from datetime import date
 from typing import Optional
 
-from fastapi import FastAPI
 from pydantic import BaseModel
 
 
 class Batch(BaseModel):
+    id: int
     reference: str
     sku: str
     quantity: int
@@ -14,11 +14,3 @@ class Batch(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-app = FastAPI()
-
-
-@app.post("/items/")
-async def create_item(item: Batch):
-    return item
