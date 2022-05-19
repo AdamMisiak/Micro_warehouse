@@ -1,6 +1,5 @@
+from app.domain import models, schemas
 from sqlalchemy.orm import Session
-
-from . import models, schemas
 
 
 def get_batch(db: Session, batch_id: int):

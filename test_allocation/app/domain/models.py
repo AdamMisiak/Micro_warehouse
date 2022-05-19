@@ -1,7 +1,6 @@
 # pylint: disable=too-few-public-methods, relative-beyond-top-level
+from app.database import Base
 from sqlalchemy import Column, Date, Integer, String
-
-from .database import Base
 
 
 class Batch(Base):
