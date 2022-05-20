@@ -1,13 +1,16 @@
-# pylint: disable=too-few-public-methods, relative-beyond-top-level
-from app.database import Base
-from sqlalchemy import Column, Date, Integer, String
+# pylint: disable=too-few-public-methods
+from datetime import date
+from typing import Optional
+
+from pydantic import BaseModel
 
 
-class Batch(Base):
-    __tablename__ = "batches"
+class Batch(BaseModel):
+    id: int
+    reference: str
+    sku: str
+    quantity: int
+    eta: Optional[date]
 
-    id = Column(Integer, primary_key=True, index=True)
-    reference = Column(String, index=True)
-    sku = Column(String, index=True)
-    quantity = Column(Integer)
-    eta = Column(Date)
+    class Config:
+        orm_mode = True
