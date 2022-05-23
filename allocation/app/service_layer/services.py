@@ -17,3 +17,11 @@ def create_batch(db: Session, batch: models.Batch):
     db.commit()
     db.refresh(db_batch)
     return db_batch
+
+
+def create_order_line(db: Session, order_line: models.OrderLine):
+    db_order_line = orm.OrderLine(**order_line.dict())
+    db.add(db_order_line)
+    db.commit()
+    db.refresh(db_order_line)
+    return db_order_line
