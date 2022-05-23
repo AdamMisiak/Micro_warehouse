@@ -22,7 +22,7 @@ class Batch(Base):
 
 
 def get_db():
-    # could be changed to async in the future
+    # could be changed to async in the future - check docs
     db = SessionLocal()
     try:
         yield db
