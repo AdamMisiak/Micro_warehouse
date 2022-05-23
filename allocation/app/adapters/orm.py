@@ -21,6 +21,14 @@ class Batch(Base):
     eta = Column(Date)
 
 
+class OrderLine(Base):
+    __tablename__ = "order_lines"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sku = Column(String, index=True)
+    quantity = Column(Integer)
+
+
 def get_db():
     # could be changed to async in the future - check docs
     db = SessionLocal()
