@@ -1,4 +1,4 @@
-# pylint: disable=too-few-public-methods, fixme
+# pylint: disable=too-few-public-methods, fixme, no-self-use
 from datetime import date
 from typing import Optional
 
@@ -11,6 +11,10 @@ class Batch(BaseModel):
     sku: str
     quantity: int
     eta: Optional[date]
+
+    # def allocate(self, line) -> str:
+    def allocate(self):
+        print("allocating")
 
     class Config:
         orm_mode = True

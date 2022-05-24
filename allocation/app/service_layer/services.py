@@ -13,6 +13,7 @@ def get_batches(db: Session, skip: int = 0, limit: int = 100):
 
 def create_batch(db: Session, batch: models.Batch):
     db_batch = orm.Batch(**batch.dict())
+    batch.allocate()
     db.add(db_batch)
     db.commit()
     db.refresh(db_batch)
