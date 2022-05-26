@@ -1,11 +1,18 @@
 from app.adapters import orm
 from app.domain import models
+from app.service_layer import unit_of_work
 from sqlalchemy.orm import Session
 
 
-# when repository is ready those are not needed
-def get_batch(db: Session, batch_id: int):
-    return db.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
+def get_batch(batch_id: int, uow: unit_of_work.AbstractUnitOfWork):
+    # maybe skip uow?
+    with uow:
+        batch = uow.batches.get(batch_id=batch_id)
+    return batch
+
+
+# def get_batch(db: Session, batch_id: int):
+#     return db.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
 
 
 def get_batches(db: Session, skip: int = 0, limit: int = 100):

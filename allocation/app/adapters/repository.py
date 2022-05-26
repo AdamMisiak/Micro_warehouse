@@ -1,7 +1,8 @@
 import abc
 from typing import Set
 
-from allocation.app.domain import models
+from app.adapters import orm
+from app.domain import models
 
 
 class AbstractRepository(abc.ABC):
@@ -13,8 +14,8 @@ class AbstractRepository(abc.ABC):
         self._add(batch)
         self.seen.add(batch)
 
-    def get(self, sku) -> models.Batch:
-        batch = self._get(sku)
+    def get(self, batch_id) -> models.Batch:
+        batch = self._get(batch_id)
         if batch:
             self.seen.add(batch)
         return batch
@@ -37,6 +38,7 @@ class SqlAlchemyRepository(AbstractRepository):
         pass
         # db.add(db_batch)
 
-    def _get(self, sku):
-        pass
+    def _get(self, batch_id):
+        print(self.session.query(orm.Batch).filter(orm.Batch.id == batch_id).first())
+        return self.session.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
         # return db.query(orm.Batch).offset(skip).limit(limit).all()

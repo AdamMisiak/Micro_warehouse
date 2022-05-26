@@ -2,7 +2,7 @@ from typing import List
 
 from app.adapters.orm import get_db
 from app.domain import models
-from app.service_layer import services
+from app.service_layer import services, unit_of_work
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -29,7 +29,12 @@ def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db))
 
 @router.get("/{batch_id}", response_model=models.Batch, tags=["batches"])
 def read_batch(batch_id: int, db: Session = Depends(get_db)):
-    db_batch = services.get_batch(db, batch_id=batch_id)
+    # db_batch = services.get_batch(db, batch_id=batch_id)
+    db_batch = services.get_batch(batch_id=batch_id, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
     if db_batch is None:
         raise HTTPException(status_code=404, detail="Batch not found")
     return db_batch
+    # db_batch = services.get_batch(db, batch_id=batch_id)
+    # if db_batch is None:
+    #     raise HTTPException(status_code=404, detail="Batch not found")
+    # return db_batch
