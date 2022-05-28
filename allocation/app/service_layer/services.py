@@ -15,8 +15,14 @@ def get_batch(batch_id: int, uow: unit_of_work.AbstractUnitOfWork):
 #     return db.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
 
 
-def get_batches(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(orm.Batch).offset(skip).limit(limit).all()
+def get_batches(uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        batches = uow.batches.get_all()
+    return batches
+
+
+# def get_batches(db: Session, skip: int = 0, limit: int = 100):
+#     return db.query(orm.Batch).offset(skip).limit(limit).all()
 
 
 def create_batch(db: Session, batch: models.Batch):

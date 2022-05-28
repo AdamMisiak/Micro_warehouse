@@ -21,9 +21,15 @@ def create_batch(batch: models.Batch, db: Session = Depends(get_db)):
     return services.create_batch(db=db, batch=batch)
 
 
+# @router.get("/", response_model=List[models.Batch], tags=["batches"])
+# def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+#     batches = services.get_batches(db, skip=skip, limit=limit)
+#     return batches
+
+
 @router.get("/", response_model=List[models.Batch], tags=["batches"])
 def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    batches = services.get_batches(db, skip=skip, limit=limit)
+    batches = services.get_batches(uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
     return batches
 
 
