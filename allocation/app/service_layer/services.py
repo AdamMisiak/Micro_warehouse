@@ -15,9 +15,9 @@ def get_batch(batch_id: int, uow: unit_of_work.AbstractUnitOfWork):
 #     return db.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
 
 
-def get_batches(uow: unit_of_work.AbstractUnitOfWork):
+def get_batches(limit: int, uow: unit_of_work.AbstractUnitOfWork):
     with uow:
-        batches = uow.batches.get_all()
+        batches = uow.batches.get_all(limit=limit)
     return batches
 
 
