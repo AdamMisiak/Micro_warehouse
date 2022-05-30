@@ -44,15 +44,15 @@ class SqlAlchemyRepository(AbstractRepository):
         self.session = session
 
     def _add(self, batch):
+        # changing from pydantic schema to ORM model
         db_batch = orm.Batch(**batch.dict())
         self.session.add(db_batch)
-        self.session.commit()
-        self.session.refresh(db_batch)
+        # self.session.commit()
+        # self.session.refresh(db_batch)
         return db_batch
 
     def _get(self, batch_id):
         return self.session.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
-        # return db.query(orm.Batch).offset(skip).limit(limit).all()
 
     def _get_all(self, limit):
         return self.session.query(orm.Batch).limit(limit).all()

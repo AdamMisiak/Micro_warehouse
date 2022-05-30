@@ -36,6 +36,7 @@ def get_batches(limit: int, uow: unit_of_work.AbstractUnitOfWork):
 def create_batch(batch: models.Batch, uow: unit_of_work.AbstractUnitOfWork):
     with uow:
         batch = uow.batches.add(batch=batch)
+        uow.commit()
     return batch
 
 

@@ -4,7 +4,8 @@ from __future__ import annotations
 import abc
 
 from app.adapters import repository
-from sqlalchemy.orm.session import Session
+
+# from sqlalchemy.orm.session import Session
 
 
 class AbstractUnitOfWork(abc.ABC):
@@ -39,9 +40,12 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
     def __exit__(self, *args):
         super().__exit__(*args)
+        # self.session.expunge_all()
+        print("CLOSE")
         self.session.close()
 
     def _commit(self):
+        print("COMMIT")
         self.session.commit()
 
     # def rollback(self):
