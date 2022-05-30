@@ -25,12 +25,18 @@ def get_batches(limit: int, uow: unit_of_work.AbstractUnitOfWork):
 #     return db.query(orm.Batch).offset(skip).limit(limit).all()
 
 
-def create_batch(db: Session, batch: models.Batch):
-    db_batch = orm.Batch(**batch.dict())
-    db.add(db_batch)
-    db.commit()
-    db.refresh(db_batch)
-    return db_batch
+# def create_batch(db: Session, batch: models.Batch):
+#     db_batch = orm.Batch(**batch.dict())
+#     db.add(db_batch)
+#     db.commit()
+#     db.refresh(db_batch)
+#     return db_batch
+
+
+def create_batch(batch: models.Batch, uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        batch = uow.batches.add(batch=batch)
+    return batch
 
 
 def create_order_line(db: Session, order_line: models.OrderLine):
