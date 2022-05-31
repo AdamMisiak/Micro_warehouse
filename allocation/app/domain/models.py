@@ -1,6 +1,6 @@
 # pylint: disable=too-few-public-methods, fixme, no-self-use
 from datetime import date
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -11,6 +11,20 @@ class Batch(BaseModel):
     sku: str
     quantity: int
     eta: Optional[date]
+
+    # def allocate(self, line) -> str:
+    def allocate(self):
+        print("allocating")
+
+    class Config:
+        orm_mode = True
+
+
+class Product(BaseModel):
+    id: int
+    sku: str
+    version_number: int
+    batches: List[Batch]
 
     # def allocate(self, line) -> str:
     def allocate(self):
