@@ -10,31 +10,31 @@ class AbstractRepository(abc.ABC):
         # need to understand the idea of seen
         self.seen = set()  # type: Set[models.Batch]
 
-    def add(self, batch: models.Batch):
-        # self.seen.add(batch)
-        db_batch = self._add(batch)
-        return db_batch
+    def add(self, product: models.Product):
+        # self.seen.add(product)
+        db_product = self._add(product)
+        return db_product
 
-    def get(self, batch_id) -> models.Batch:
-        batch = self._get(batch_id)
-        if batch:
-            self.seen.add(batch)
-        return batch
+    def get(self, sku) -> models.Product:
+        product = self._get(sku)
+        if product:
+            self.seen.add(product)
+        return product
 
-    def get_all(self, limit) -> models.Batch:
-        batches = self._get_all(limit=limit)
-        return batches
+    def get_all(self, limit) -> models.Product:
+        products = self._get_all(limit=limit)
+        return products
 
     @abc.abstractmethod
-    def _add(self, batch: models.Batch):
+    def _add(self, product: models.Product):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get(self, batch_id) -> models.Batch:
+    def _get(self, sku) -> models.Product:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get_all(self, limit) -> models.Batch:
+    def _get_all(self, limit) -> models.Product:
         raise NotImplementedError
 
 
@@ -43,16 +43,16 @@ class SqlAlchemyRepository(AbstractRepository):
         super().__init__()
         self.session = session
 
-    def _add(self, batch):
+    def _add(self, product):
         # changing from pydantic schema to ORM model
-        db_batch = orm.Batch(**batch.dict())
-        self.session.add(db_batch)
+        db_product = orm.Batch(**product.dict())
+        self.session.add(db_product)
         # self.session.commit()
-        # self.session.refresh(db_batch)
-        return db_batch
+        # self.session.refresh(db_product)
+        return db_product
 
-    def _get(self, batch_id):
-        return self.session.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
+    def _get(self, sku):
+        return self.session.query(orm.Product).filter(orm.Product.sku == sku).first()
 
     def _get_all(self, limit):
-        return self.session.query(orm.Batch).limit(limit).all()
+        return self.session.query(orm.Product).limit(limit).all()

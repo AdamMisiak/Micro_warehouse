@@ -1,4 +1,4 @@
-from app.adapters import orm
+from app.adapters import orm, repository
 from app.domain import models
 from app.service_layer import unit_of_work
 from sqlalchemy.orm import Session
@@ -46,3 +46,7 @@ def create_order_line(db: Session, order_line: models.OrderLine):
     db.commit()
     db.refresh(db_order_line)
     return db_order_line
+
+
+def get_product(sku: str, repository: repository.AbstractRepository):
+    return repository.get(sku=sku)
