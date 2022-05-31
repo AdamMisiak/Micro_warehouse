@@ -1,5 +1,5 @@
 # pylint: disable=too-few-public-methods, relative-beyond-top-level
-from sqlalchemy import Column, Date, Integer, String, create_engine
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -28,6 +28,7 @@ class Batch(Base):
     sku = Column(String, index=True)
     quantity = Column(Integer)
     eta = Column(Date)
+    product_id = Column(Integer, ForeignKey("products.id"))
     product = relationship("Product", back_populates="batches")
 
 
