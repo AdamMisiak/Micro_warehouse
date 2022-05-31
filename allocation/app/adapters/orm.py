@@ -14,8 +14,8 @@ Base = declarative_base()
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(Integer, primary_key=True, index=True)
-    sku = Column(String, index=True)
+    # id = Column(Integer, primary_key=True, index=True)
+    sku = Column(String, primary_key=True, index=True)
     version_number = Column(Integer, nullable=False, default="0")
     batches = relationship("Batch", back_populates="product")
 
@@ -25,10 +25,11 @@ class Batch(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     reference = Column(String, index=True)
-    sku = Column(String, index=True)
+    sku = Column(ForeignKey("products.sku"))
+    # sku = Column(String, index=True)
     quantity = Column(Integer)
     eta = Column(Date)
-    product_id = Column(Integer, ForeignKey("products.id"))
+    # product_id = Column(Integer, ForeignKey("products.id"))
     product = relationship("Product", back_populates="batches")
 
 

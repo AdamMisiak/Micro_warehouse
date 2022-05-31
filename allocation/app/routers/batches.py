@@ -23,9 +23,9 @@ router = APIRouter(
 
 @router.post("/", response_model=models.Batch, tags=["batches"])
 def create_batch(batch: models.Batch, db: Session = Depends(get_db)):
-    db_batch = services.get_batch(batch_id=batch.id, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
-    if db_batch:
-        raise HTTPException(status_code=400, detail="Batch already exists")
+    # db_batch = services.get_batch(batch_id=batch.id, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
+    # if db_batch:
+    #     raise HTTPException(status_code=400, detail="Batch already exists")
     return services.create_batch(batch=batch, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
 
 

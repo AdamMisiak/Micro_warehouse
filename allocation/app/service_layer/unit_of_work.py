@@ -35,17 +35,17 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session = session
 
     def __enter__(self):
-        self.batches = repository.SqlAlchemyRepository(self.session)
+        self.products = repository.SqlAlchemyRepository(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):
         super().__exit__(*args)
         # self.session.expunge_all()
-        print("CLOSE")
+        # print("CLOSE")
         self.session.close()
 
     def _commit(self):
-        print("COMMIT")
+        # print("COMMIT")
         self.session.commit()
 
     # def rollback(self):

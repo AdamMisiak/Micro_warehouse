@@ -6,9 +6,9 @@ from pydantic import BaseModel
 
 
 class Batch(BaseModel):
-    id: int
-    reference: str
+    # id: int
     sku: str
+    reference: str
     quantity: int
     eta: Optional[date]
 
@@ -21,9 +21,9 @@ class Batch(BaseModel):
 
 
 class Product(BaseModel):
-    id: int
+    # id: int
     sku: str
-    version_number: int
+    version_number: Optional[int]
     batches: List[Batch]
 
     # def allocate(self, line) -> str:

@@ -45,7 +45,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def _add(self, product):
         # changing from pydantic schema to ORM model
-        db_product = orm.Batch(**product.dict())
+        db_product = orm.Product(**product.dict())
         self.session.add(db_product)
         # self.session.commit()
         # self.session.refresh(db_product)

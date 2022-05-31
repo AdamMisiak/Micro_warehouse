@@ -15,6 +15,7 @@ def get_batch(batch_id: int, uow: unit_of_work.AbstractUnitOfWork):
 #     return db.query(orm.Batch).filter(orm.Batch.id == batch_id).first()
 
 
+# just for tests
 def get_batches(limit: int, uow: unit_of_work.AbstractUnitOfWork):
     with uow:
         batches = uow.batches.get_all(limit=limit)
@@ -35,9 +36,17 @@ def get_batches(limit: int, uow: unit_of_work.AbstractUnitOfWork):
 
 def create_batch(batch: models.Batch, uow: unit_of_work.AbstractUnitOfWork):
     with uow:
-        batch = uow.batches.add(batch=batch)
+        product = uow.products.get(sku=batch.sku)
+        if product is None:
+            print("PRODUCT IS NONE - CREATING NEW")
+            product = models.Product(id=10, sku=batch.sku, batches=[])
+            uow.products.add(product)
+        print(product)
+        print(product.batches)
+        print(batch.dict())
+        product.batches.append(orm.Batch(**batch.dict()))
+        print(product.batches)
         uow.commit()
-    return batch
 
 
 def create_order_line(db: Session, order_line: models.OrderLine):
@@ -46,6 +55,9 @@ def create_order_line(db: Session, order_line: models.OrderLine):
     db.commit()
     db.refresh(db_order_line)
     return db_order_line
+
+
+# just for tests
 
 
 def get_product(sku: str, repository: repository.AbstractRepository):
