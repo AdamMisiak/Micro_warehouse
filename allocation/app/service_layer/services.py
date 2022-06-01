@@ -53,8 +53,9 @@ def create_order_line(db: Session, order_line: models.OrderLine):
 
 
 # just for tests
-def get_product(sku: str, repository: repository.AbstractRepository):
-    return repository.get(sku=sku)
+def get_product(sku: str, uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        return uow.products.get(sku=sku)
 
 
 # just for tests

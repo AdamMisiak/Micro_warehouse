@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.get("/{sku}", response_model=models.Product, tags=["products"])
 def get_product(sku: str, db: Session = Depends(get_db)):
-    db_product = services.get_product(sku=sku, repository=repository.SqlAlchemyRepository(session=db))
+    db_product = services.get_product(sku=sku, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
