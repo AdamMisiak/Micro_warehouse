@@ -58,5 +58,6 @@ def get_product(sku: str, repository: repository.AbstractRepository):
 
 
 # just for tests
-def get_all_products(limit: int, repository: repository.AbstractRepository):
-    return repository.get_all(limit=limit)
+def get_all_products(limit: int, uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        return uow.products.get_all(limit=limit)

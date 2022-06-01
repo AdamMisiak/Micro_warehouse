@@ -17,7 +17,7 @@ class Product(Base):
     # id = Column(Integer, primary_key=True, index=True)
     sku = Column(String, primary_key=True, index=True)
     version_number = Column(Integer, nullable=False, default="0")
-    batches = relationship("Batch", back_populates="product")
+    batches = relationship("Batch", lazy="subquery", back_populates="product")
 
 
 class Batch(Base):

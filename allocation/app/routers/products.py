@@ -24,4 +24,4 @@ def get_product(sku: str, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[models.Product], tags=["products"])
 def get_all_products(limit: int = 100, db: Session = Depends(get_db)):
-    return services.get_all_products(limit=limit, repository=repository.SqlAlchemyRepository(session=db))
+    return services.get_all_products(limit=limit, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
