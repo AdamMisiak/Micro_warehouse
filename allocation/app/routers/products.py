@@ -20,3 +20,8 @@ def get_product(sku: str, db: Session = Depends(get_db)):
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
+
+
+@router.get("/", response_model=List[models.Product], tags=["products"])
+def get_all_products(limit: int = 100, db: Session = Depends(get_db)):
+    return services.get_all_products(limit=limit, repository=repository.SqlAlchemyRepository(session=db))

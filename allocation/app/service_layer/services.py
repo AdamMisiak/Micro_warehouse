@@ -38,14 +38,9 @@ def create_batch(batch: models.Batch, uow: unit_of_work.AbstractUnitOfWork):
     with uow:
         product = uow.products.get(sku=batch.sku)
         if product is None:
-            print("PRODUCT IS NONE - CREATING NEW")
             product = models.Product(id=10, sku=batch.sku, batches=[])
             uow.products.add(product)
-        print(product)
-        print(product.batches)
-        print(batch.dict())
         product.batches.append(orm.Batch(**batch.dict()))
-        print(product.batches)
         uow.commit()
 
 
@@ -58,7 +53,10 @@ def create_order_line(db: Session, order_line: models.OrderLine):
 
 
 # just for tests
-
-
 def get_product(sku: str, repository: repository.AbstractRepository):
     return repository.get(sku=sku)
+
+
+# just for tests
+def get_all_products(limit: int, repository: repository.AbstractRepository):
+    return repository.get_all(limit=limit)
