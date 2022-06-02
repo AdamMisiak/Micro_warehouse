@@ -40,6 +40,7 @@ def create_batch(batch: models.Batch, uow: unit_of_work.AbstractUnitOfWork):
             uow.products.add(product)
         product.batches.append(orm.Batch(**batch.dict()))
         uow.commit()
+    return batch
 
 
 def create_order_line(db: Session, order_line: models.OrderLine):
