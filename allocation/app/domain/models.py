@@ -21,7 +21,6 @@ class Batch(BaseModel):
 
 
 class Product(BaseModel):
-    # id: int
     sku: str
     version_number: Optional[int]
     batches: List[Batch]

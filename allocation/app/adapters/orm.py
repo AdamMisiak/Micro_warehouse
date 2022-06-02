@@ -6,7 +6,8 @@ from sqlalchemy.orm import relationship, sessionmaker
 DATABASE_URL = "postgresql://admin:admin@allocation_db/allocation_db"
 
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+# , expire_on_commit=False)
+SessionLocal = sessionmaker(bind=engine)
 
 Base = declarative_base()
 
@@ -14,7 +15,6 @@ Base = declarative_base()
 class Product(Base):
     __tablename__ = "products"
 
-    # id = Column(Integer, primary_key=True, index=True)
     sku = Column(String, primary_key=True, index=True)
     version_number = Column(Integer, nullable=False, default="0")
     batches = relationship("Batch", lazy="subquery", back_populates="product")
@@ -23,13 +23,11 @@ class Product(Base):
 class Batch(Base):
     __tablename__ = "batches"
 
-    id = Column(Integer, primary_key=True, index=True)
-    reference = Column(String, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     sku = Column(ForeignKey("products.sku"))
-    # sku = Column(String, index=True)
+    reference = Column(String, index=True)
     quantity = Column(Integer)
     eta = Column(Date)
-    # product_id = Column(Integer, ForeignKey("products.id"))
     product = relationship("Product", back_populates="batches")
 
 

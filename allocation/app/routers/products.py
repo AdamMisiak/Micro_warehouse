@@ -1,6 +1,5 @@
 from typing import List
 
-from app.adapters import repository
 from app.adapters.orm import get_db
 from app.domain import models
 from app.service_layer import services, unit_of_work
