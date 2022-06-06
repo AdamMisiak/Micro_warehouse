@@ -1,7 +1,8 @@
-# pylint: disable=too-few-public-methods, fixme, no-self-use
+# pylint: disable=too-few-public-methods, fixme, no-self-use, no-member, raise-missing-from
 from datetime import date
 from typing import List, Optional
 
+from app.utils import exceptions
 from pydantic import BaseModel
 
 
@@ -22,10 +23,6 @@ class Batch(BaseModel):
     quantity: int
     eta: Optional[date]
     _allocations: Optional[set]
-
-    # def allocate(self, line) -> str:
-    # def allocate(self):
-    #     print("allocating")
 
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
@@ -55,9 +52,14 @@ class Product(BaseModel):
     version_number: Optional[int]
     batches: List[Batch]
 
-    # def allocate(self, line) -> str:
-    def allocate(self):
-        print("allocating")
+    def allocate(self, line: OrderLine) -> str:
+        try:
+            batch = next(batch for batch in sorted(self.batches) if batch.can_allocate(line))
+            batch.allocate(line)
+            self.version_number += 1
+            return batch.reference
+        except StopIteration:
+            raise exceptions.OutOfStock(f"Out of stock for sku {line.sku}")
 
     class Config:
         orm_mode = True
