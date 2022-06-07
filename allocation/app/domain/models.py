@@ -54,7 +54,8 @@ class Product(BaseModel):
 
     def allocate(self, line: OrderLine) -> str:
         try:
-            batch = next(batch for batch in sorted(self.batches) if batch.can_allocate(line))
+            batch = self.batches[0]
+            # batch = next(batch for batch in sorted(self.batches) if batch.can_allocate(line))
             batch.allocate(line)
             self.version_number += 1
             return batch.reference
