@@ -1,4 +1,4 @@
-from app.adapters import orm
+from app.adapters import orm, repository
 from app.domain import models
 from app.service_layer import unit_of_work
 from app.utils import exceptions
@@ -33,14 +33,18 @@ from sqlalchemy.orm import Session
 #     return db_batch
 
 
-def create_batch(batch: models.Batch, uow: unit_of_work.AbstractUnitOfWork):
+def create_batch(batch: models.BatchBase, uow: unit_of_work.AbstractUnitOfWork):
     with uow:
         product = uow.products.get(sku=batch.sku)
         if product is None:
-            product = models.Product(sku=batch.sku, batches=[])
+            product = models.ProductWithBatches(sku=batch.sku, batches=[])
             uow.products.add(product)
-        product.batches.append(orm.Batch(**batch.dict()))
+        product.batches.append(models.Batch(**batch.dict()))
+        print(product)
+        print(product.batches)
         uow.commit()
+    print(product)
+    print(product.batches)
     return batch
 
 
@@ -53,15 +57,13 @@ def create_order_line(db: Session, order_line: models.OrderLine):
 
 
 # just for tests
-def get_product(sku: str, uow: unit_of_work.AbstractUnitOfWork):
-    with uow:
-        return uow.products.get(sku=sku)
+def get_product(sku: str, repository: repository.AbstractRepository):
+    return repository.get(sku=sku)
 
 
 # just for tests
-def get_all_products(limit: int, uow: unit_of_work.AbstractUnitOfWork):
-    with uow:
-        return uow.products.get_all(limit=limit)
+def get_all_products(limit: int, repository: repository.AbstractRepository):
+    return repository.get_all(limit=limit)
 
 
 def allocate(
