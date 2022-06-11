@@ -1,7 +1,9 @@
+from typing import List
+
 from app.adapters.orm import get_db
 from app.domain import models
-from app.service_layer import services, unit_of_work
-from fastapi import APIRouter, Depends
+from app.service_layer import services
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 router = APIRouter(
@@ -21,13 +23,25 @@ router = APIRouter(
 
 @router.post("/", response_model=models.Batch, tags=["batches"])
 def create_batch(batch: models.Batch, db: Session = Depends(get_db)):
-    return services.create_batch(batch=batch, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
+    return services.create_batch(db, batch=batch)
+    # return services.create_batch(batch=batch, repository=repository.SqlAlchemyRepository(session=db))
 
 
-# @router.get("/", response_model=List[models.Batch], tags=["batches"])
-# def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     batches = services.get_batches(db, skip=skip, limit=limit)
-#     return batches
+# Add products without repository
+
+
+@router.get("/", response_model=List[models.Batch], tags=["batches"])
+def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    batches = services.get_batches(db, skip=skip, limit=limit)
+    return batches
+
+
+@router.get("/{batch_id}", response_model=models.Batch, tags=["batches"])
+def read_batch(batch_id: int, db: Session = Depends(get_db)):
+    db_batch = services.get_batch(db, batch_id=batch_id)
+    if db_batch is None:
+        raise HTTPException(status_code=404, detail="Batch not found")
+    return db_batch
 
 
 # @router.get("/", response_model=List[models.Batch], tags=["batches"])

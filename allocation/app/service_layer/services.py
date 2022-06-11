@@ -32,38 +32,65 @@ from sqlalchemy.orm import Session
 #     db.refresh(db_batch)
 #     return db_batch
 
+# def create_batch(batch: models.BatchBase, uow: unit_of_work.AbstractUnitOfWork):
+#     with uow:
+#         product = uow.products.get(sku=batch.sku)
+#         if product is None:
+#             product = models.ProductWithBatches(sku=batch.sku, batches=[])
+#             uow.products.add(product)
+#         product.batches.append(models.Batch(**batch.dict()))
+#         print(product)
+#         print(product.batches)
+#         uow.commit()
+#     print(product)
+#     print(product.batches)
+#     return batch
 
-def create_batch(batch: models.BatchBase, uow: unit_of_work.AbstractUnitOfWork):
-    with uow:
-        product = uow.products.get(sku=batch.sku)
-        if product is None:
-            product = models.ProductWithBatches(sku=batch.sku, batches=[])
-            uow.products.add(product)
-        product.batches.append(models.Batch(**batch.dict()))
-        print(product)
-        print(product.batches)
-        uow.commit()
-    print(product)
-    print(product.batches)
+
+# Batches - with repo
+# def create_batch(batch: models.Batch, repository: repository.AbstractRepository):
+#     batch = repository.add(batch, models.Batch)
+#     print(batch)
+#     print('--'*50)
+#     product = repository.get(sku=batch.sku)
+#     print(product)
+#     print('--'*50)
+#     product.batches.append(batch)
+#     repository.session.commit()
+#     # product.batches.append(repository.add(batch, models.Batch))
+#     return batch
+
+
+def create_batch(db: Session, batch: models.Batch):
+    db.add(batch)
+    db.commit()
+    db.refresh(batch)
     return batch
 
 
+def get_batch(db: Session, batch_id: int):
+    return db.query(models.Batch).filter(models.Batch.id == batch_id).first()
+
+
+def get_batches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Batch).offset(skip).limit(limit).all()
+
+
+# # Products
+# def get_product(sku: str, repository: repository.AbstractRepository):
+#     return repository.get(sku=sku)
+
+
+# def get_all_products(limit: int, repository: repository.AbstractRepository):
+#     return repository.get_all(limit=limit)
+
+# Order lines
 def create_order_line(db: Session, order_line: models.OrderLine):
     db_order_line = orm.OrderLine(**order_line.dict())
     db.add(db_order_line)
     db.commit()
     db.refresh(db_order_line)
     return db_order_line
-
-
-# just for tests
-def get_product(sku: str, repository: repository.AbstractRepository):
-    return repository.get(sku=sku)
-
-
-# just for tests
-def get_all_products(limit: int, repository: repository.AbstractRepository):
-    return repository.get_all(limit=limit)
 
 
 def allocate(
