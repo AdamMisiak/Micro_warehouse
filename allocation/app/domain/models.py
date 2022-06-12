@@ -2,8 +2,6 @@
 from datetime import date
 from typing import List, Optional
 
-from app.utils import exceptions
-from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -24,13 +22,15 @@ class BatchBase(SQLModel):
     reference: str
     quantity: int
     eta: Optional[date]
-    _allocations: Optional[set]
 
 
 class Batch(BatchBase, table=True):
     id: Optional[int] = Field(default=None, index=True, primary_key=True)
     product: Optional[Product] = Relationship(back_populates="batches")
-    # product: Optional[Product] = Relationship(back_populates="batches", sa_relationship_kwargs={"lazy": "subquery"})
+
+
+class BatchCreate(BatchBase):
+    pass
 
 
 class ProductWithBatches(Product):

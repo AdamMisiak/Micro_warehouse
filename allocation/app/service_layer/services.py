@@ -1,4 +1,4 @@
-from app.adapters import orm, repository
+from app.adapters import orm
 from app.domain import models
 from app.service_layer import unit_of_work
 from app.utils import exceptions
@@ -62,10 +62,11 @@ from sqlalchemy.orm import Session
 
 
 def create_batch(db: Session, batch: models.Batch):
-    db.add(batch)
+    db_batch = models.Batch.from_orm(batch)
+    db.add(db_batch)
     db.commit()
-    db.refresh(batch)
-    return batch
+    db.refresh(db_batch)
+    return db_batch
 
 
 def get_batch(db: Session, batch_id: int):
@@ -80,13 +81,13 @@ def get_batches(db: Session, skip: int = 0, limit: int = 100):
 # def get_product(sku: str, repository: repository.AbstractRepository):
 #     return repository.get(sku=sku)
 
-
 # def get_all_products(limit: int, repository: repository.AbstractRepository):
 #     return repository.get_all(limit=limit)
 
+
 # Order lines
 def create_order_line(db: Session, order_line: models.OrderLine):
-    db_order_line = orm.OrderLine(**order_line.dict())
+    db_order_line = models.OrderLine(**order_line.dict())
     db.add(db_order_line)
     db.commit()
     db.refresh(db_order_line)

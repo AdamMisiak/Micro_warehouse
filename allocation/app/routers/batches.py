@@ -22,12 +22,8 @@ router = APIRouter(
 
 
 @router.post("/", response_model=models.Batch, tags=["batches"])
-def create_batch(batch: models.Batch, db: Session = Depends(get_db)):
+def create_batch(batch: models.BatchCreate, db: Session = Depends(get_db)):
     return services.create_batch(db, batch=batch)
-    # return services.create_batch(batch=batch, repository=repository.SqlAlchemyRepository(session=db))
-
-
-# Add products without repository
 
 
 @router.get("/", response_model=List[models.Batch], tags=["batches"])
