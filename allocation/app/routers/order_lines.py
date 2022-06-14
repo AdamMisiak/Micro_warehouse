@@ -2,7 +2,7 @@ from app.adapters.orm import get_db
 from app.domain import models
 from app.service_layer import services, unit_of_work
 from app.utils import exceptions
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 router = APIRouter(
@@ -14,6 +14,9 @@ router = APIRouter(
 
 @router.post("/", response_model=models.OrderLine, tags=["order_lines"])
 def create_order_lines(order_line: models.OrderLine, db: Session = Depends(get_db)):
+    db_order_line = services.get_order_line(db, order_line_id=order_line.id)
+    if db_order_line:
+        raise HTTPException(status_code=400, detail="Order line with this id already exists")
     return services.create_order_line(db=db, order_line=order_line)
 
 

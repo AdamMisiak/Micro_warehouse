@@ -1,4 +1,3 @@
-from app.adapters import orm
 from app.domain import models
 from app.service_layer import unit_of_work
 from app.utils import exceptions
@@ -87,11 +86,15 @@ def get_batches(db: Session, skip: int = 0, limit: int = 100):
 
 # Order lines
 def create_order_line(db: Session, order_line: models.OrderLine):
-    db_order_line = models.OrderLine(**order_line.dict())
+    db_order_line = models.OrderLine.from_orm(order_line)
     db.add(db_order_line)
     db.commit()
     db.refresh(db_order_line)
     return db_order_line
+
+
+def get_order_line(db: Session, order_line_id: int):
+    return db.query(models.OrderLine).filter(models.OrderLine.id == order_line_id).first()
 
 
 def allocate(
