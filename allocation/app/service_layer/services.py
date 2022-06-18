@@ -68,11 +68,11 @@ def create_batch(db: Session, batch: models.Batch):
     return db_batch
 
 
-def get_batch(db: Session, batch_id: int):
-    return db.query(models.Batch).filter(models.Batch.id == batch_id).first()
+def get_batch(db: Session, sku: str):
+    return db.query(models.Batch).filter(models.Batch.sku == sku).first()
 
 
-def get_batches(db: Session, skip: int = 0, limit: int = 100):
+def get_all_batches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Batch).offset(skip).limit(limit).all()
 
 

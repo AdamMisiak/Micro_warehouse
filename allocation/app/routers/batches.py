@@ -27,14 +27,14 @@ def create_batch(batch: models.BatchCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=List[models.Batch], tags=["batches"])
-def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_all_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     batches = services.get_batches(db, skip=skip, limit=limit)
     return batches
 
 
-@router.get("/{batch_id}", response_model=models.Batch, tags=["batches"])
-def read_batch(batch_id: int, db: Session = Depends(get_db)):
-    db_batch = services.get_batch(db, batch_id=batch_id)
+@router.get("/{sku}", response_model=models.Batch, tags=["batches"])
+def read_batch(sku: str, db: Session = Depends(get_db)):
+    db_batch = services.get_batch(db, sku=sku)
     if db_batch is None:
         raise HTTPException(status_code=404, detail="Batch not found")
     return db_batch

@@ -21,7 +21,7 @@ def create_order_lines(order_line: models.OrderLine, db: Session = Depends(get_d
 
 
 @router.post("/allocate", tags=["order_lines"])
-def allocate_products(order_line: models.OrderLine, db: Session = Depends(get_db)):
+def allocate_batches(order_line: models.OrderLine, db: Session = Depends(get_db)):
     try:
         batch_reference = services.allocate(order_line, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
     except (exceptions.OutOfStock, exceptions.InvalidSku) as e:
