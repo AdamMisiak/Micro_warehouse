@@ -1,5 +1,4 @@
 from app.domain import models
-from app.service_layer import unit_of_work
 from app.utils import exceptions
 from sqlalchemy.orm import Session
 
@@ -72,12 +71,13 @@ def get_batch(db: Session, batch_id: int):
     return db.query(models.Batch).filter(models.Batch.id == batch_id).first()
 
 
-def get_batches_by_sku(db: Session, sku: str):
-    return db.query(models.Batch).filter(models.Batch.sku == sku).all()
-
-
 def get_all_batches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Batch).offset(skip).limit(limit).all()
+
+
+# only used in allocation
+def get_batches_by_sku(db: Session, sku: str):
+    return db.query(models.Batch).filter(models.Batch.sku == sku).all()
 
 
 # # Products
@@ -102,20 +102,16 @@ def get_order_line(db: Session, order_line_id: int):
 
 
 def allocate(
+    db: Session,
     order_line: models.OrderLine,
     # id: str, sku: str, quantity: int,
-    uow: unit_of_work.AbstractUnitOfWork,
+    # uow: unit_of_work.AbstractUnitOfWork,
 ) -> str:
-    line = order_line
-    with uow:
-        product = uow.products.get(sku=line.sku)
-        if product is None:
-            raise exceptions.InvalidSku(f"Invalid sku {line.sku}")
-        print(product)
-        print(dir(product))
-        print(models.Product(sku=product.sku, version_number=product.version_number, batches=product.batches))
-        # maybe add this: https://github.com/tiangolo/sqlmodel
-        # or this: https://github.com/tiangolo/pydantic-sqlalchemy
-        batch_reference = product.allocate(line)
-        uow.commit()
-    return batch_reference
+    batches = get_batches_by_sku(db, sku=order_line.sku)
+    print(batches)
+    if not batches:
+        raise exceptions.InvalidSku(f"Invalid sku {order_line.sku}")
+    print("allocate here!")
+    # batch_reference = product.allocate(line)
+    # uow.commit()
+    return "allocate"
