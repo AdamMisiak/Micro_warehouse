@@ -27,6 +27,28 @@ class BatchBase(SQLModel):
 class Batch(BatchBase, table=True):
     id: Optional[int] = Field(default=None, index=True, primary_key=True)
     product: Optional[Product] = Relationship(back_populates="batches")
+    # _allocations: PrivateAttr(default=set()) #Set[OrderLine]
+
+    def allocate(self, line: OrderLine):
+        if self.can_allocate(line):
+            self.quantity -= line.quantity
+        else:
+            print("no enough quantity")
+
+    # def deallocate(self, line: OrderLine):
+    #     if line in self._allocations:
+    #         self._allocations.remove(line)
+
+    # @property
+    # def allocated_quantity(self) -> int:
+    #     return sum(line.quantity for line in self._allocations)
+
+    # @property
+    # def available_quantity(self) -> int:
+    #     return self.quantity - self.allocated_quantity
+
+    def can_allocate(self, line: OrderLine) -> bool:
+        return self.sku == line.sku and self.quantity >= line.quantity
 
 
 class BatchCreate(BatchBase):
