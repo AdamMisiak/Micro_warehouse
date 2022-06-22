@@ -77,7 +77,7 @@ def get_all_batches(db: Session, skip: int = 0, limit: int = 100):
 
 # only used in allocation
 def get_batches_by_sku(db: Session, sku: str):
-    return db.query(models.Batch).filter(models.Batch.sku == sku).all()
+    return db.query(models.Batch).order_by(models.Batch.quantity).filter(models.Batch.sku == sku).all()
 
 
 # # Products
@@ -107,11 +107,12 @@ def allocate(
     # id: str, sku: str, quantity: int,
     # uow: unit_of_work.AbstractUnitOfWork,
 ) -> str:
-    batches = get_batches_by_sku(db, sku=order_line.sku)
-    print(batches)
-    if not batches:
+    # biggest quantity
+    batch_to_allocate = get_batches_by_sku(db, sku=order_line.sku)[-1]
+    if not batch_to_allocate:
         raise exceptions.InvalidSku(f"Invalid sku {order_line.sku}")
-    print("allocate here!")
+    batch_to_allocate.allocate(order_line)
+    db.add(batch_to_allocate)
+    db.commit()
     # batch_reference = product.allocate(line)
-    # uow.commit()
     return "allocate"
