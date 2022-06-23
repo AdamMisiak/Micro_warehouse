@@ -101,18 +101,12 @@ def get_order_line(db: Session, order_line_id: int):
     return db.query(models.OrderLine).filter(models.OrderLine.id == order_line_id).first()
 
 
-def allocate(
-    db: Session,
-    order_line: models.OrderLine,
-    # id: str, sku: str, quantity: int,
-    # uow: unit_of_work.AbstractUnitOfWork,
-) -> str:
-    # biggest quantity
+def allocate(db: Session, order_line: models.OrderLine) -> str:
+    # batch with the biggest quantity
     batch_to_allocate = get_batches_by_sku(db, sku=order_line.sku)[-1]
     if not batch_to_allocate:
         raise exceptions.InvalidSku(f"Invalid sku {order_line.sku}")
     batch_to_allocate.allocate(order_line)
     db.add(batch_to_allocate)
     db.commit()
-    # batch_reference = product.allocate(line)
-    return "allocate"
+    return batch_to_allocate

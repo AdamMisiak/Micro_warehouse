@@ -20,7 +20,7 @@ def create_order_lines(order_line: models.OrderLine, db: Session = Depends(get_d
     return services.create_order_line(db=db, order_line=order_line)
 
 
-@router.post("/allocate", tags=["order_lines"])
+@router.post("/allocate", response_model=models.Batch, tags=["order_lines"])
 def allocate_batches(order_line: models.OrderLine, db: Session = Depends(get_db)):
     try:
         return services.allocate(db, order_line)
