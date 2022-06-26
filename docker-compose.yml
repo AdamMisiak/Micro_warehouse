@@ -4,9 +4,9 @@ services:
   allocation:
     container_name: allocation
     build: ./allocation
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    command: uvicorn app2.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./allocation:/app
+      - ./allocation:/app2
     ports:
       - 8000:8000
 
@@ -27,7 +27,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=root
     ports:
-      - "5050:80"
+      - 5050:80
 
   # localstack:
   #   container_name: localstack
