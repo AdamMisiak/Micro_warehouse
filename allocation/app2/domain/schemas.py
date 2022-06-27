@@ -20,3 +20,12 @@ class Batch(BatchBase):
 
     class Config:
         orm_mode = True
+
+
+class Order(BaseModel):
+    id: Optional[int]
+    sku: str
+    quantity: int
+
+    class Config:
+        orm_mode = True
