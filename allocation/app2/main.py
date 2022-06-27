@@ -1,17 +1,12 @@
 from app2.domain.models import Base
+from app2.routers import batches
 from fastapi import FastAPI
 
-from .database import SessionLocal, engine
+from .database import engine
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(batches.router)
