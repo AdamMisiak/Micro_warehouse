@@ -14,6 +14,7 @@ router = APIRouter(
 
 @router.post("/", response_model=schemas.Batch, tags=["batches"])
 def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
+    # TODO can be moved to services or crud file
     db_batch = models.Batch(**batch.dict())
     db.add(db_batch)
     db.commit()
@@ -21,15 +22,15 @@ def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
     return db_batch
 
 
-# @router.get("/{batch_id}", response_model=models.Batch, tags=["batches"])
-# def read_batch(batch_id: int, db: Session = Depends(get_db)):
-#     db_batch = services.get_batch(db, batch_id=batch_id)
-#     if db_batch is None:
-#         raise HTTPException(status_code=404, detail="Batch not found")
-#     return db_batch
+@router.get("/{batch_id}", response_model=schemas.Batch, tags=["batches"])
+def read_batch(batch_id: int, db: Session = Depends(get_db)):
+    db_batch = db.query(models.Batch).filter(models.Batch.id == batch_id).first()
+    if db_batch is None:
+        raise HTTPException(status_code=404, detail="Batch not found")
+    return db_batch
 
 
-# @router.get("/", response_model=List[models.Batch], tags=["batches"])
-# def read_all_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     batches = services.get_all_batches(db, skip=skip, limit=limit)
-#     return batches
+@router.get("/", response_model=List[schemas.Batch], tags=["batches"])
+def read_all_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    batches = db.query(models.Batch).offset(skip).limit(limit).all()
+    return batches
