@@ -22,15 +22,15 @@ def create_order(order: schemas.Order, db: Session = Depends(get_db)):
     return db_order
 
 
-# @router.get("/{batch_id}", response_model=schemas.Batch, tags=["orders"])
-# def read_batch(batch_id: int, db: Session = Depends(get_db)):
-#     db_batch = db.query(models.Batch).filter(models.Batch.id == batch_id).first()
-#     if db_batch is None:
-#         raise HTTPException(status_code=404, detail="Batch not found")
-#     return db_batch
+@router.get("/{order_id}", response_model=schemas.Order, tags=["orders"])
+def read_order(order_id: int, db: Session = Depends(get_db)):
+    db_order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    if db_order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return db_order
 
 
-# @router.get("/", response_model=List[schemas.Batch], tags=["orders"])
-# def read_all_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     batches = db.query(models.Batch).offset(skip).limit(limit).all()
-#     return batches
+@router.get("/", response_model=List[schemas.Order], tags=["orders"])
+def read_all_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    orders = db.query(models.Order).offset(skip).limit(limit).all()
+    return orders
