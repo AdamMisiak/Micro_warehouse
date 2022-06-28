@@ -2,6 +2,7 @@ from typing import List
 
 from app2.database import get_db
 from app2.domain import models, schemas
+from app2.utils import exceptions
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -28,6 +29,21 @@ def read_order(order_id: int, db: Session = Depends(get_db)):
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     return db_order
+
+
+@router.get("/{order_id}/allocate", response_model=schemas.Batch, tags=["orders"])
+def allocate_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    batch = db.query(models.Batch).order_by(models.Batch.quantity).filter(models.Batch.sku == order.sku).first()
+    print(order_id)
+    print(order)
+    print(order.sku)
+    print(batch)
+    if not batch:
+        raise exceptions.InvalidSku(f"Invalid sku {order.sku}")
+
+    # TODO add allocation = quantitity lowered and some relation process
+    # batch and order related?
 
 
 @router.get("/", response_model=List[schemas.Order], tags=["orders"])
