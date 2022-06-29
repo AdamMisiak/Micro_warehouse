@@ -34,6 +34,8 @@ def read_order(order_id: int, db: Session = Depends(get_db)):
 @router.get("/{order_id}/allocate", response_model=schemas.Batch, tags=["orders"])
 def allocate_order(order_id: int, db: Session = Depends(get_db)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
     batch = db.query(models.Batch).order_by(models.Batch.quantity).filter(models.Batch.sku == order.sku).first()
     print(order_id)
     print(order)
@@ -42,6 +44,10 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     if not batch:
         raise exceptions.InvalidSku(f"Invalid sku {order.sku}")
 
+    if batch.can_allocate(order):
+        print(batch.quantity)
+        print(type(batch.quantity))
+        print("CAN ALLOCATE")
     # TODO add allocation = quantitity lowered and some relation process
     # batch and order related?
 
