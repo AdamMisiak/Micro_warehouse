@@ -3,6 +3,7 @@ from typing import List
 from app2.database import get_db
 from app2.domain import models, schemas
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 router = APIRouter(
@@ -20,6 +21,19 @@ def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_batch)
     return db_batch
+
+
+@router.put("/{batch_id}", tags=["batches"])
+def update_batch(batch_id: int, batch: schemas.Batch, db: Session = Depends(get_db)):
+    db_batch = db.query(models.Batch).filter(models.Batch.id == batch_id)
+    if db_batch is None:
+        raise HTTPException(status_code=404, detail="Batch not found")
+    db_batch.update(
+        {"id": batch.id, "sku": batch.sku, "reference": batch.reference, "quantity": batch.quantity, "eta": batch.eta}
+    )
+    db.commit()
+    # TODO make response model Batch + what about relations
+    return "batch updated"
 
 
 @router.get("/{batch_id}", response_model=schemas.Batch, tags=["batches"])
