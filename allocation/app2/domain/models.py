@@ -1,4 +1,5 @@
 from app2.database import Base
+from app2.utils import exceptions
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -23,3 +24,10 @@ class Batch(Base):
     def can_allocate(self, line: Order) -> bool:
         # TODO check why type(self.quantity) is string
         return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
+
+    def allocate(self, line: Order):
+        if self.can_allocate(line):
+            self.quantity = int(self.quantity)
+            self.quantity -= line.quantity
+        else:
+            raise exceptions.OutOfStock(f"Out of stock {self.sku}")
