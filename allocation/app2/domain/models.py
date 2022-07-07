@@ -1,4 +1,5 @@
 # pylint: disable=R0903
+# too-few-public-methods
 from app2.database import Base
 from app2.utils import exceptions
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
