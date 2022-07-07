@@ -32,5 +32,6 @@ class Batch(Base):
         if self.can_allocate(line):
             self.quantity = int(self.quantity)
             self.quantity -= line.quantity
+            line.batch = self
         else:
             raise exceptions.OutOfStock(f"Out of stock {self.sku}")

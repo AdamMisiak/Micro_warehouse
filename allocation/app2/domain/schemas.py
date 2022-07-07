@@ -1,3 +1,4 @@
+# pylint: disable=R0903
 from datetime import datetime
 from typing import Optional
 
@@ -29,3 +30,7 @@ class Order(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class OrderWithBatch(Order):
+    batch: Optional[Batch] = None
