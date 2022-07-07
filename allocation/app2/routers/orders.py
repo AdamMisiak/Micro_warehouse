@@ -1,3 +1,5 @@
+# pylint: disable=W0511
+# fixme
 from typing import List
 
 from app2.database import get_db
@@ -43,16 +45,15 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     print(batch)
     if not batch:
         raise exceptions.InvalidSku(f"Invalid sku {order.sku}")
-
-    if batch.can_allocate(order):
-        print(batch.quantity)
-        print(type(batch.quantity))
-        print("CAN ALLOCATE")
+    batch.allocate(order)
+    db.add(batch)
+    db.commit()
+    print("DONE")
     # TODO add allocation = quantitity lowered and some relation process
     # batch and order related?
 
 
-@router.get("/", response_model=List[schemas.Order], tags=["orders"])
+@router.get("/", response_model=List[schemas.OrderWithBatch], tags=["orders"])
 def read_all_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     orders = db.query(models.Order).offset(skip).limit(limit).all()
     return orders
