@@ -1,28 +1,31 @@
+# pylint: disable=R0903
 from app2.database import Base
 from app2.utils import exceptions
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
 class Order(Base):
-    __tablename__ = "orders"
+    __tablename__ = "order"
 
     id = Column(Integer, primary_key=True, index=True, nullable=True, default=None)
     sku = Column(String, default=None)
     quantity = Column(Integer, default=10)
+    batch_id = Column(Integer, ForeignKey("batch.id"))
+    batch = relationship("Batch", back_populates="order")
 
 
 class Batch(Base):
-    __tablename__ = "batches"
+    __tablename__ = "batch"
 
     id = Column(Integer, primary_key=True, index=True, nullable=True, default=None)
     sku = Column(String, default=None)
     reference = Column(String, default=None)
     quantity = Column(Integer, default=10)
     eta = Column(DateTime, nullable=True)
+    order = relationship("Order", back_populates="batch")
 
     def can_allocate(self, line: Order) -> bool:
-        # TODO check why type(self.quantity) is string
         return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
 
     def allocate(self, line: Order):
