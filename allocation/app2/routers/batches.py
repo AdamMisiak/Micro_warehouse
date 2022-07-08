@@ -1,9 +1,10 @@
+# pylint: disable=C0103
+# invalid-name
 from typing import List
 
 from app2.database import get_db
 from app2.domain import models, schemas
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 router = APIRouter(

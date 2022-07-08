@@ -39,22 +39,14 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     batch = db.query(models.Batch).order_by(models.Batch.quantity).filter(models.Batch.sku == order.sku).first()
-    print(order_id)
-    print(order)
-    print(order.sku)
-    print(batch)
     if not batch:
         raise exceptions.InvalidSku(f"Invalid sku {order.sku}")
     batch.allocate(order)
     db.add(batch)
     db.commit()
-    print("DONE")
-    # TODO add allocation = quantitity lowered and some relation process
-    # batch and order related?
+    db.refresh(batch)
 
-    # add pylint rc z disable
-    # cala konfiguracje moze to toml file przeniesc
-    # poprawic returny z endpointow
+    return batch
 
 
 @router.get("/", response_model=List[schemas.OrderWithBatch], tags=["orders"])
