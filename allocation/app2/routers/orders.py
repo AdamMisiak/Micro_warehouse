@@ -1,5 +1,5 @@
-# pylint: disable=W0511
-# fixme
+# pylint: disable=C0103
+# invalid-name
 from typing import List
 
 from app2.database import get_db
@@ -51,6 +51,10 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     print("DONE")
     # TODO add allocation = quantitity lowered and some relation process
     # batch and order related?
+
+    # add pylint rc z disable
+    # cala konfiguracje moze to toml file przeniesc
+    # poprawic returny z endpointow
 
 
 @router.get("/", response_model=List[schemas.OrderWithBatch], tags=["orders"])

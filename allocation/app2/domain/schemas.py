@@ -1,5 +1,3 @@
-# pylint: disable=R0903
-# too-few-public-methods
 from datetime import datetime
 from typing import Optional
 
