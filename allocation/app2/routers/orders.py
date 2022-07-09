@@ -18,6 +18,7 @@ router = APIRouter(
 @router.post("/", response_model=schemas.Order, tags=["orders"])
 def create_order(order: schemas.Order, db: Session = Depends(get_db)):
     # TODO can be moved to services or crud file
+    # TODO let id be automatic
     db_order = models.Order(**order.dict())
     db.add(db_order)
     db.commit()
@@ -25,7 +26,13 @@ def create_order(order: schemas.Order, db: Session = Depends(get_db)):
     return db_order
 
 
-@router.get("/{order_id}", response_model=schemas.Order, tags=["orders"])
+@router.get("/", response_model=List[schemas.OrderWithBatch], tags=["orders"])
+def read_all_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    orders = db.query(models.Order).offset(skip).limit(limit).all()
+    return orders
+
+
+@router.get("/{order_id}", response_model=schemas.OrderWithBatch, tags=["orders"])
 def read_order(order_id: int, db: Session = Depends(get_db)):
     db_order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if db_order is None:
@@ -38,6 +45,8 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    if order.is_allocated():
+        raise HTTPException(status_code=404, detail="Order is already allocated")
     batch = db.query(models.Batch).order_by(models.Batch.quantity).filter(models.Batch.sku == order.sku).first()
     if not batch:
         raise exceptions.InvalidSku(f"Invalid sku {order.sku}")
@@ -47,9 +56,3 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     db.refresh(batch)
 
     return batch
-
-
-@router.get("/", response_model=List[schemas.OrderWithBatch], tags=["orders"])
-def read_all_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    orders = db.query(models.Order).offset(skip).limit(limit).all()
-    return orders
