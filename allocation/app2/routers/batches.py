@@ -33,8 +33,7 @@ def update_batch(batch_id: int, batch: schemas.BatchCreate, db: Session = Depend
         {"id": batch_id, "sku": batch.sku, "reference": batch.reference, "quantity": batch.quantity, "eta": batch.eta}
     )
     db.commit()
-    # TODO make response model Batch + what about relations
-    return "batch updated"
+    return {"status_code": 200, "message": f"Batch id: {batch_id} has been updated"}
 
 
 @router.get("/{batch_id}", response_model=schemas.Batch, tags=["batches"])

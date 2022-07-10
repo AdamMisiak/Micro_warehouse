@@ -37,5 +37,3 @@ class Batch(Base):
             line.batch = self
         else:
             raise exceptions.OutOfStock(f"Out of stock {self.sku}")
-
-    # add is allocated and interrupt allocation when it is allocated already???
