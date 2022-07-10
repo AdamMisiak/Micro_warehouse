@@ -22,10 +22,17 @@ class Batch(BatchBase):
         orm_mode = True
 
 
-class Order(BaseModel):
-    id: Optional[int]
+class OrderBase(BaseModel):
     sku: str
     quantity: int
+
+
+class OrderCreate(OrderBase):
+    pass
+
+
+class Order(OrderBase):
+    id: Optional[int]
 
     class Config:
         orm_mode = True

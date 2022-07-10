@@ -16,9 +16,8 @@ router = APIRouter(
 
 
 @router.post("/", response_model=schemas.Order, tags=["orders"])
-def create_order(order: schemas.Order, db: Session = Depends(get_db)):
+def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     # TODO can be moved to services or crud file
-    # TODO let id be automatic
     db_order = models.Order(**order.dict())
     db.add(db_order)
     db.commit()

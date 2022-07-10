@@ -25,12 +25,12 @@ def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{batch_id}", tags=["batches"])
-def update_batch(batch_id: int, batch: schemas.Batch, db: Session = Depends(get_db)):
+def update_batch(batch_id: int, batch: schemas.BatchCreate, db: Session = Depends(get_db)):
     db_batch = db.query(models.Batch).filter(models.Batch.id == batch_id)
     if db_batch is None:
         raise HTTPException(status_code=404, detail="Batch not found")
     db_batch.update(
-        {"id": batch.id, "sku": batch.sku, "reference": batch.reference, "quantity": batch.quantity, "eta": batch.eta}
+        {"id": batch_id, "sku": batch.sku, "reference": batch.reference, "quantity": batch.quantity, "eta": batch.eta}
     )
     db.commit()
     # TODO make response model Batch + what about relations
