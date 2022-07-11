@@ -4,3 +4,11 @@ class OutOfStock(Exception):
 
 class InvalidSku(Exception):
     pass
+
+
+class OrderNotFound(Exception):
+    pass
+
+
+class OrderAlreadyAllocated(Exception):
+    pass
