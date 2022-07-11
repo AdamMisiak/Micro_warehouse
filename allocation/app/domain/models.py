@@ -1,59 +1,39 @@
-# pylint: disable=too-few-public-methods, fixme, no-self-use, no-member, raise-missing-from
-from datetime import date
-from typing import List, Optional
-
-from sqlmodel import Field, Relationship, SQLModel
-
-
-class OrderLine(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, index=True, primary_key=True)
-    sku: str
-    quantity: int
+from app2.database import Base
+from app2.utils import exceptions
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 
-class Product(SQLModel, table=True):
-    sku: str = Field(default=None, primary_key=True)
-    version_number: Optional[int] = Field(default="0")
-    batches: List["Batch"] = Relationship(back_populates="product", sa_relationship_kwargs={"lazy": "joined"})
+class Order(Base):
+    __tablename__ = "order"
+
+    id = Column(Integer, primary_key=True)
+    sku = Column(String, default=None)
+    quantity = Column(Integer, default=10)
+    batch_id = Column(Integer, ForeignKey("batch.id"))
+    batch = relationship("Batch", back_populates="order")
+
+    def is_allocated(self) -> bool:
+        return self.batch is not None
 
 
-class BatchBase(SQLModel):
-    sku: str = Field(default=None, foreign_key="product.sku")
-    reference: str
-    quantity: int
-    eta: Optional[date]
+class Batch(Base):
+    __tablename__ = "batch"
 
+    id = Column(Integer, primary_key=True, index=True, nullable=True, default=None)
+    sku = Column(String, default=None)
+    reference = Column(String, default=None)
+    quantity = Column(Integer, default=10)
+    eta = Column(DateTime, nullable=True)
+    order = relationship("Order", back_populates="batch")
 
-class Batch(BatchBase, table=True):
-    id: Optional[int] = Field(default=None, index=True, primary_key=True)
-    product: Optional[Product] = Relationship(back_populates="batches")
-    # _allocations: PrivateAttr(default=set()) #Set[OrderLine]
+    def can_allocate(self, line: Order) -> bool:
+        return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
 
-    def allocate(self, line: OrderLine):
+    def allocate(self, line: Order):
         if self.can_allocate(line):
+            self.quantity = int(self.quantity)
             self.quantity -= line.quantity
+            line.batch = self
         else:
-            print("no enough quantity")
-
-    # def deallocate(self, line: OrderLine):
-    #     if line in self._allocations:
-    #         self._allocations.remove(line)
-
-    # @property
-    # def allocated_quantity(self) -> int:
-    #     return sum(line.quantity for line in self._allocations)
-
-    # @property
-    # def available_quantity(self) -> int:
-    #     return self.quantity - self.allocated_quantity
-
-    def can_allocate(self, line: OrderLine) -> bool:
-        return self.sku == line.sku and self.quantity >= line.quantity
-
-
-class BatchCreate(BatchBase):
-    pass
-
-
-class ProductWithBatches(Product):
-    batches: List[BatchBase] = []
+            raise exceptions.OutOfStock(f"Out of stock {self.sku}")

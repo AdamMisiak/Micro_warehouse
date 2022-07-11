@@ -1,61 +1,50 @@
+# pylint: disable=C0103
+# invalid-name
 from typing import List
 
-from app.adapters.orm import get_db
-from app.domain import models
-from app.service_layer import services
+from app2.database import get_db
+from app2.domain import models, schemas
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix="/api/v1/batches",
-    tags=["batches"],
+    tags=["Batches"],
     responses={404: {"description": "Not found"}},
 )
 
 
-# @router.post("/", response_model=models.Batch, tags=["batches"])
-# def create_batch(batch: models.Batch, db: Session = Depends(get_db)):
-#     db_batch = services.get_batch(db, batch_id=batch.id)
-#     if db_batch:
-#         raise HTTPException(status_code=400, detail="Batch already exists")
-#     return services.create_batch(db=db, batch=batch)
+@router.post("/", response_model=schemas.Batch, tags=["Batches"])
+def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
+    # TODO can be moved to services or crud file
+    db_batch = models.Batch(**batch.dict())
+    db.add(db_batch)
+    db.commit()
+    db.refresh(db_batch)
+    return db_batch
 
 
-@router.post("/", response_model=models.Batch, tags=["batches"])
-def create_batch(batch: models.BatchCreate, db: Session = Depends(get_db)):
-    return services.create_batch(db, batch=batch)
+@router.put("/{batch_id}", tags=["Batches"])
+def update_batch(batch_id: int, batch: schemas.BatchCreate, db: Session = Depends(get_db)):
+    db_batch = db.query(models.Batch).filter(models.Batch.id == batch_id)
+    if db_batch is None:
+        raise HTTPException(status_code=404, detail="Batch not found")
+    db_batch.update(
+        {"id": batch_id, "sku": batch.sku, "reference": batch.reference, "quantity": batch.quantity, "eta": batch.eta}
+    )
+    db.commit()
+    return {"status_code": 200, "message": f"Batch id: {batch_id} has been updated"}
 
 
-@router.get("/{batch_id}", response_model=models.Batch, tags=["batches"])
+@router.get("/{batch_id}", response_model=schemas.Batch, tags=["Batches"])
 def read_batch(batch_id: int, db: Session = Depends(get_db)):
-    db_batch = services.get_batch(db, batch_id=batch_id)
+    db_batch = db.query(models.Batch).filter(models.Batch.id == batch_id).first()
     if db_batch is None:
         raise HTTPException(status_code=404, detail="Batch not found")
     return db_batch
 
 
-@router.get("/", response_model=List[models.Batch], tags=["batches"])
+@router.get("/", response_model=List[schemas.Batch], tags=["Batches"])
 def read_all_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    batches = services.get_all_batches(db, skip=skip, limit=limit)
+    batches = db.query(models.Batch).offset(skip).limit(limit).all()
     return batches
-
-
-# @router.get("/", response_model=List[models.Batch], tags=["batches"])
-# def read_batches(limit: int = 100, db: Session = Depends(get_db)):
-#     batches = services.get_batches(limit=limit, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
-#     return batches
-
-
-# @router.get("/{batch_id}", response_model=models.Batch, tags=["batches"])
-# def read_batch(batch_id: int, db: Session = Depends(get_db)):
-# db_batch = services.get_batch(db, batch_id=batch_id)
-
-# db_batch = services.get_batch(batch_id=batch_id, uow=unit_of_work.SqlAlchemyUnitOfWork(session=db))
-# if db_batch is None:
-#     raise HTTPException(status_code=404, detail="Batch not found")
-# return db_batch
-
-# db_batch = services.get_batch(db, batch_id=batch_id)
-# if db_batch is None:
-#     raise HTTPException(status_code=404, detail="Batch not found")
-# return db_batch

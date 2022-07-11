@@ -1,17 +1,13 @@
-# pylint: disable=too-few-public-methods
-# from app.adapters.orm import Base, engine
-from app.adapters.orm import engine
-from app.routers import batches, order_lines, products
+from app2.domain.models import Base
+from app2.routers import batches, orders
 from fastapi import FastAPI
-from sqlmodel import SQLModel
+
+from .database import engine
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 
-@app.on_event("startup")
-def on_startup():
-    SQLModel.metadata.create_all(engine)
-
-
 app.include_router(batches.router)
-app.include_router(order_lines.router)
+app.include_router(orders.router)

@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 
-WORKDIR /app2
+WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 
@@ -11,4 +11,4 @@ RUN apt-get update \
 RUN pip install -r /app/requirements.txt \
     && rm -rf /root/.cache/pip
 
-COPY . /app2/
+COPY . /app/
