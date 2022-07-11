@@ -1,5 +1,5 @@
-from app2.database import Base
-from app2.utils import exceptions
+from app.database import Base
+from app.utils import exceptions
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 

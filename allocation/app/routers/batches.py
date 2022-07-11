@@ -2,8 +2,8 @@
 # invalid-name
 from typing import List
 
-from app2.database import get_db
-from app2.domain import models, schemas
+from app.database import get_db
+from app.domain import models, schemas
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
