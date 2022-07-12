@@ -30,22 +30,22 @@ services:
     ports:
       - 5050:80
 
-  # localstack:
-  #   container_name: localstack
-  #   image: localstack/localstack:0.14.2
-  #   network_mode: bridge
-  #   privileged: true
-  #   ports:
-  #     - '4566:4566'
-  #   environment:
-  #     - SERVICES=${SERVICES- }
-  #     - DATA_DIR=/tmp/localstack
-  #     - LAMBDA_EXECUTOR=docker-reuse
-  #     - DOCKER_HOST=unix:///var/run/docker.sock
-  #     - AWS_EXECUTION_ENV=true
-  #   volumes:
-  #     - ".volume/tmp/localstack:/tmp/localstack"
-  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:0.14.2
+    network_mode: bridge
+    privileged: true
+    ports:
+      - '4566:4566'
+    environment:
+      - SERVICES=${SERVICES- }
+      - DATA_DIR=/tmp/localstack
+      - LAMBDA_EXECUTOR=docker-reuse
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_EXECUTION_ENV=true
+    volumes:
+      - ".volume/tmp/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
 
 volumes:
