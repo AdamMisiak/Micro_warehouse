@@ -20,6 +20,7 @@ def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
     db_batch = models.Batch(**batch.dict())
     db.add(db_batch)
     db.commit()
+    # TODO add publish event after each commit
     db.refresh(db_batch)
     return db_batch
 
