@@ -44,16 +44,25 @@ class Batch(Base):
         sqs_queues = []
         for queue in sqs_resource.queues.all():
             sqs_queues.append(queue)
-        print(sqs_queues)
+
+        # print(sqs_queues)
         # print(sqs_resource.queues.filter(
         #     QueueNamePrefix="micro-warehouse"))
+        queue = sqs_resource.get_queue_by_name(QueueName="micro-warehouse-external-queue")
+        print(queue)
+
+        response = queue.send_message(MessageBody="world")
+        print(response.get("MessageId"))
+        print(response.get("MD5OfMessageBody"))
+
+        for message in queue.receive_messages():
+            print(message.body)
 
         # print(sqs_resource.create_queue(QueueName="micro-warehouse-external-queue",
         #                                      Attributes={
         #                                          'DelaySeconds': "0",
         #                                          'VisibilityTimeout': "60"
         #                                      }))
-        print("test")
 
         # pobrac kolejke po nazwie i dodac do niej waidomosc, sprawdzic w konterze czy jest tam wiadomosc
 
