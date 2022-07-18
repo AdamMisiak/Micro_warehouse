@@ -1,7 +1,16 @@
+import os
+
+import boto3
 from app.database import Base
 from app.utils import exceptions
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
+from . import events
+
+# sns_url = 'http://%s:4575' % os.environ['LOCALSTACK_HOSTNAME']
+sqs_client = boto3.client("sqs", region_name="eu-west-1")
+sqs_resource = boto3.resource("sqs", region_name="eu-west-1", endpoint_url="http://host.docker.internal:4566")
 
 
 class Order(Base):
@@ -31,9 +40,29 @@ class Batch(Base):
         return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
 
     def allocate(self, line: Order):
-        if self.can_allocate(line):
-            self.quantity = int(self.quantity)
-            self.quantity -= line.quantity
-            line.batch = self
-        else:
-            raise exceptions.OutOfStock(f"Out of stock {self.sku}")
+        print(sqs_resource.queues.all())
+        sqs_queues = []
+        for queue in sqs_resource.queues.all():
+            sqs_queues.append(queue)
+        print(sqs_queues)
+        # print(sqs_resource.queues.filter(
+        #     QueueNamePrefix="micro-warehouse"))
+
+        # print(sqs_resource.create_queue(QueueName="micro-warehouse-external-queue",
+        #                                      Attributes={
+        #                                          'DelaySeconds': "0",
+        #                                          'VisibilityTimeout': "60"
+        #                                      }))
+        print("test")
+
+        # pobrac kolejke po nazwie i dodac do niej waidomosc, sprawdzic w konterze czy jest tam wiadomosc
+
+        # TODO try to add event to queue there
+        # events.OutOfStock(line.sku)
+
+        # if self.can_allocate(line):
+        #     self.quantity = int(self.quantity)
+        #     self.quantity -= line.quantity
+        #     line.batch = self
+        # else:
+        # raise exceptions.OutOfStock(f"Out of stock {self.sku}")
