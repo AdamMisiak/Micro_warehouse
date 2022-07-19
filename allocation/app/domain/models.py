@@ -51,20 +51,50 @@ class Batch(Base):
         queue = sqs_resource.get_queue_by_name(QueueName="micro-warehouse-external-queue")
         print(queue)
 
-        response = queue.send_message(MessageBody="world")
+        response = queue.send_message(
+            MessageAttributes={
+                "Type": {"DataType": "String", "StringValue": "out_of_stock"},
+                "Sku": {"DataType": "String", "StringValue": "BIG-TABLE"},
+            },
+            MessageBody="BIG-TABLE",
+        )
+
+        # response = queue.send_message(
+        #     # QueueUrl='string',
+        #     MessageBody='string',
+        #     DelaySeconds=123,
+        #     MessageAttributes={
+        #         'Type': {
+        #             'DataType': 'String',
+        #             'StringValue': 'out_of_stock'
+        #         }
+        #     },
+        #     MessageSystemAttributes={
+        #         'Type': {
+        #             'DataType': 'String',
+        #             'StringValue': 'out_of_stock'
+        #         },
+        #     },
+        # )
+
+        print(response)
         print(response.get("MessageId"))
-        print(response.get("MD5OfMessageBody"))
+        # print(response.get("MD5OfMessageBody"))
+
+        # TODO oczyscic cala kolejke zeby byla pusta
+        # TODO sprawdzic czemu jest tylko 1 wiadmosc w kolejce
 
         for message in queue.receive_messages():
             print(message.body)
+            print(message.message_attributes)
+            # print(message.attributes)
+            # print(dir(message))
 
         # print(sqs_resource.create_queue(QueueName="micro-warehouse-external-queue",
         #                                      Attributes={
         #                                          'DelaySeconds': "0",
         #                                          'VisibilityTimeout': "60"
         #                                      }))
-
-        # pobrac kolejke po nazwie i dodac do niej waidomosc, sprawdzic w konterze czy jest tam wiadomosc
 
         # TODO try to add event to queue there
         # events.OutOfStock(line.sku)
