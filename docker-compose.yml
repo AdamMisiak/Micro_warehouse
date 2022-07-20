@@ -11,6 +11,7 @@ services:
       - AWS_ACCESS_KEY_ID=micro_warehouse
       - AWS_SECRET_ACCESS_KEY=micro_warehouse
       - AWS_DEFAULT_REGION=eu-west-1
+      - LOCALSTACK_HOST=host.docker.internal
     volumes:
       - ./allocation:/app
 
@@ -40,7 +41,7 @@ services:
     network_mode: bridge
     privileged: true
     ports:
-      - '4566:4566'
+      - 4566:4566
     environment:
       - SERVICES=${SERVICES- }
       - DATA_DIR=/tmp/localstack
