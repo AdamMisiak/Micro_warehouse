@@ -1,6 +1,7 @@
 import os
 
-import boto3
+# import boto3
+import localstack_client.session as boto3
 from app.database import Base
 from app.utils import exceptions
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
@@ -10,7 +11,9 @@ from . import events
 
 # sns_url = 'http://%s:4575' % os.environ['LOCALSTACK_HOSTNAME']
 sqs_client = boto3.client("sqs", region_name="eu-west-1")
-sqs_resource = boto3.resource("sqs", region_name="eu-west-1", endpoint_url="http://host.docker.internal:4566")
+# FOR BASIC BOTO3 version
+# sqs_resource = boto3.resource("sqs", region_name="eu-west-1", endpoint_url="http://host.docker.internal:4566")
+sqs_resource = boto3.resource("sqs", region_name="eu-west-1")
 
 
 class Order(Base):
@@ -40,16 +43,21 @@ class Batch(Base):
         return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
 
     def allocate(self, line: Order):
-        print(sqs_resource.queues.all())
-        sqs_queues = []
-        for queue in sqs_resource.queues.all():
-            sqs_queues.append(queue)
+        # LIST QUEUEUES
+        # print(sqs_resource.queues.all())
+        # sqs_queues = []
+        # for queue in sqs_resource.queues.all():
+        #     sqs_queues.append(queue)
 
-        # print(sqs_queues)
-        # print(sqs_resource.queues.filter(
-        #     QueueNamePrefix="micro-warehouse"))
+        # LIST QUEUEUES
+        # queues = sqs_client.list_queues()
+        # print(queues)
+        # print('--'*50)
+
+        # GET QUEUE
         queue = sqs_resource.get_queue_by_name(QueueName="micro-warehouse-external-queue")
         print(queue)
+        print("--" * 50)
 
         response = queue.send_message(
             MessageAttributes={
@@ -83,10 +91,12 @@ class Batch(Base):
 
         # TODO oczyscic cala kolejke zeby byla pusta
         # TODO sprawdzic czemu jest tylko 1 wiadmosc w kolejce
+        # TODO na atrybuty sprawdz metode z tego: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/sqs.html
 
         for message in queue.receive_messages():
             print(message.body)
             print(message.message_attributes)
+            print("--" * 50)
             # print(message.attributes)
             # print(dir(message))
 
