@@ -59,13 +59,17 @@ class Batch(Base):
         print(queue)
         print("--" * 50)
 
-        response = queue.send_message(
-            MessageAttributes={
-                "Type": {"DataType": "String", "StringValue": "out_of_stock"},
-                "Sku": {"DataType": "String", "StringValue": "BIG-TABLE"},
-            },
-            MessageBody="BIG-TABLE",
-        )
+        # SEND MESSAGE TO QUEUE - NOT SURE IF IT WORKS
+        # response = queue.send_message(
+        #     MessageAttributes={
+        #         "Type": {"DataType": "String", "StringValue": "out_of_stock"},
+        #         "Sku": {"DataType": "String", "StringValue": "BIG-TABLE"},
+        #     },
+        #     MessageBody="BIG-TABLE",
+        # )
+        # print(response)
+        # print(response.get("MessageId"))
+        # print(response.get("MD5OfMessageBody"))
 
         # response = queue.send_message(
         #     # QueueUrl='string',
@@ -85,21 +89,20 @@ class Batch(Base):
         #     },
         # )
 
-        print(response)
-        print(response.get("MessageId"))
-        # print(response.get("MD5OfMessageBody"))
-
         # TODO oczyscic cala kolejke zeby byla pusta
         # TODO sprawdzic czemu jest tylko 1 wiadmosc w kolejce
         # TODO na atrybuty sprawdz metode z tego: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/sqs.html
 
-        for message in queue.receive_messages():
-            print(message.body)
-            print(message.message_attributes)
-            print("--" * 50)
-            # print(message.attributes)
-            # print(dir(message))
+        # GET MESSAGES
+        print("MESSAGES:")
+        messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
+        for message in messages:
+            print(f"Received message: {message.message_id}, {message.body}, {message.message_attributes}")
 
+            # DELETE MESSAGE
+            # print(message.delete())
+
+        # CREATTE QUUEUE- CHYBA DZIALA - MOZE TEST FIFO?
         # print(sqs_resource.create_queue(QueueName="micro-warehouse-external-queue",
         #                                      Attributes={
         #                                          'DelaySeconds': "0",
