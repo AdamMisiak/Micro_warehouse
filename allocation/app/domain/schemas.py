@@ -40,3 +40,10 @@ class Order(OrderBase):
 
 class OrderWithBatch(Order):
     batch: Optional[Batch] = None
+
+
+class Queue(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
