@@ -2,9 +2,10 @@
 # invalid-name
 from typing import List
 
+import localstack_client.session as boto3
 from app.database import get_db
 from app.domain import models, schemas
-from app.utils import exceptions
+from app.utils import exceptions, settings
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -50,8 +51,20 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     if not batch:
         raise exceptions.InvalidSku(f"Invalid sku {order.sku}")
     batch.allocate(order)
-    db.add(batch)
-    db.commit()
-    db.refresh(batch)
+    # db.add(batch)
+    # db.commit()
+    # db.refresh(batch)
 
     return batch
+
+
+@router.get("/{order_id}/messages")
+def read_messages(order_id: int, db: Session = Depends(get_db)):
+    sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
+    queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
+    messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
+    for message in messages:
+        print(f"Received message: {message.message_id}, {message.body}, {message.message_attributes}")
+        # message.delete()
+        # print(message.delete())
+    return "test"
