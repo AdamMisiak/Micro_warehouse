@@ -58,6 +58,7 @@ def allocate_order(order_id: int, db: Session = Depends(get_db)):
     return batch
 
 
+# TODO separated app called utils - endpoit got get messages, queues etc
 @router.get("/{order_id}/messages")
 def read_messages(order_id: int, db: Session = Depends(get_db)):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
