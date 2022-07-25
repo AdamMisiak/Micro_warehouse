@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel
 
 
+# Batches
 class BatchBase(BaseModel):
     sku: str
     reference: str
@@ -22,6 +23,7 @@ class Batch(BatchBase):
         orm_mode = True
 
 
+# Orders
 class OrderBase(BaseModel):
     sku: str
     quantity: int
@@ -42,8 +44,17 @@ class OrderWithBatch(Order):
     batch: Optional[Batch] = None
 
 
+# Utils
 class Queue(BaseModel):
     name: str
+
+    class Config:
+        orm_mode = True
+
+
+class Message(BaseModel):
+    body: str
+    attributes: Union[dict, None] = None
 
     class Config:
         orm_mode = True
