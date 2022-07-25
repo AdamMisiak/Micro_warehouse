@@ -1,11 +1,11 @@
 # pylint: disable=C0103
 # invalid-name
+from typing import List
 
 import localstack_client.session as boto3
-from app.database import get_db
+from app.domain import schemas
 from app.utils import settings
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter
 
 router = APIRouter(
     prefix="/api/v1/utils",
@@ -14,13 +14,14 @@ router = APIRouter(
 )
 
 
-@router.get("/messages")
+@router.get("/messages", response_model=List[schemas.Message])
 def read_messages():
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
     queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
     messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
-    for message in messages:
-        print(f"Received message: {message.message_id}, {message.body}, {message.message_attributes}")
-        # message.delete()
-        # print(message.delete())
-    return "test"
+    results = [{"body": message.body, "attributes": message.message_attributes} for message in messages]
+    # for message in messages:
+    #     print(f"Received message: {message.message_id}, {message.body}, {message.message_attributes}")
+    # message.delete()
+    # print(message.delete())
+    return results
