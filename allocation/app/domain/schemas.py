@@ -53,6 +53,7 @@ class Queue(BaseModel):
 
 
 class Message(BaseModel):
+    id: str
     body: str
     attributes: Union[dict, None] = None
 
