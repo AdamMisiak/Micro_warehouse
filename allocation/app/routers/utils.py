@@ -14,6 +14,14 @@ router = APIRouter(
 )
 
 
+@router.get("/queues", response_model=List[schemas.Queue])
+def read_queues():
+    sqs_client = boto3.client("sqs", region_name=settings.REGION)
+    queues = sqs_client.list_queues().get("QueueUrls")
+    results = [{"url": queue} for queue in queues]
+    return results
+
+
 @router.get("/messages", response_model=List[schemas.Message])
 def read_messages():
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
