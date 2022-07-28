@@ -46,7 +46,7 @@ class OrderWithBatch(Order):
 
 # Utils
 class Queue(BaseModel):
-    name: str
+    url: str
 
     class Config:
         orm_mode = True
