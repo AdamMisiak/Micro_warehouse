@@ -7,4 +7,5 @@ class Event:
 
 @dataclass
 class OutOfStock(Event):
+    event_type: str
     sku: str
