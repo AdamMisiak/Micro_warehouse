@@ -49,3 +49,7 @@ def delete_all_messages():
         for message in messages
     ]
     return results
+
+
+# TODO zamienic zeby uzywac tego modelu events tutaj faktyfcznie, sprawdz jak to robili w ksiazce
+# a potem druga apka

@@ -1,6 +1,8 @@
 # import os
 
 # import boto3
+from dataclasses import asdict, dataclass
+
 import localstack_client.session as boto3
 from app.database import Base
 # from app.domain import events
@@ -8,7 +10,7 @@ from app.utils import exceptions, settings
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-# from . import events
+from . import events
 
 # sns_url = 'http://%s:4575' % os.environ['LOCALSTACK_HOSTNAME']
 sqs_client = boto3.client("sqs", region_name="eu-west-1")
@@ -121,13 +123,15 @@ class Batch(Base):
             line.batch = self
         else:
             print("ELSE")
+            # print(asdict(events.OutOfStock(sku="BIG-TABLE")))
+            # TODO how to take name of event as a body
             queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
             queue.send_message(
                 MessageAttributes={
-                    "Type": {"DataType": "String", "StringValue": "OutOfStock"},
-                    "Sku": {"DataType": "String", "StringValue": self.sku},
+                    "event_type": {"DataType": "String", "StringValue": "OutOfStock"},
+                    "sku": {"DataType": "String", "StringValue": self.sku},
                 },
                 MessageBody="OutOfStock",
             )
-            raise exceptions.OutOfStock(f"Out of stock {self.sku}")
+            # raise exceptions.OutOfStock(f"Out of stock {self.sku}")
             # TODO change to return
