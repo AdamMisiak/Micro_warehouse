@@ -121,17 +121,17 @@ class Batch(Base):
             self.quantity = int(self.quantity)
             self.quantity -= line.quantity
             line.batch = self
+            return None
         else:
-            print("ELSE")
             # print(asdict(events.OutOfStock(sku="BIG-TABLE")))
-            # TODO how to take name of event as a body
             queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
+            attributes = {
+                "event_type": {"DataType": "String", "StringValue": "OutOfStock"},
+                "sku": {"DataType": "String", "StringValue": self.sku},
+            }
+            body = "OutOfStock"
             queue.send_message(
-                MessageAttributes={
-                    "event_type": {"DataType": "String", "StringValue": "OutOfStock"},
-                    "sku": {"DataType": "String", "StringValue": self.sku},
-                },
-                MessageBody="OutOfStock",
+                MessageAttributes=attributes,
+                MessageBody=body,
             )
-            # raise exceptions.OutOfStock(f"Out of stock {self.sku}")
-            # TODO change to return
+            return {"event_type": body, "sku": self.sku}
