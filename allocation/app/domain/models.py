@@ -43,21 +43,9 @@ class Batch(Base):
     order = relationship("Order", back_populates="batch")
 
     def can_allocate(self, line: Order) -> bool:
-        # TODO needs to be splittied into -> out of stock and wrong sku
         return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
 
     def allocate(self, line: Order):
-        # print(events.OutOfStock)
-        # LIST QUEUEUES
-        # print(sqs_resource.queues.all())
-        # sqs_queues = []
-        # for queue in sqs_resource.queues.all():
-        #     sqs_queues.append(queue)
-
-        # LIST QUEUEUES
-        # queues = sqs_client.list_queues()
-        # print(queues)
-        # print('--'*50)
 
         # GET QUEUE
         # queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
@@ -135,3 +123,6 @@ class Batch(Base):
                 MessageBody=body,
             )
             return {"event_type": body, "sku": self.sku}
+
+
+# USNIECIE TEGO SYFU U GORY + MERGE REQUEST + NOWY SERWIS I NOWY MR

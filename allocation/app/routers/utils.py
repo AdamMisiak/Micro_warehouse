@@ -1,6 +1,6 @@
 # pylint: disable=C0103
 # invalid-name
-from typing import List
+from typing import List, Optional
 
 import localstack_client.session as boto3
 from app.domain import schemas
@@ -12,6 +12,16 @@ router = APIRouter(
     tags=["Utils"],
     responses={404: {"description": "Not found"}},
 )
+
+
+@router.get("/queue/{queue_name}")
+def read_queue(queue_name: str):
+    sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
+    try:
+        queue = sqs_resource.get_queue_by_name(QueueName=queue_name)
+        return {"url": queue.url}
+    except Exception as exc:
+        return {"error": "queue_does_not_exist", "msg": exc}
 
 
 @router.get("/queues", response_model=List[schemas.Queue])
@@ -31,10 +41,6 @@ def read_messages():
         {"id": message.message_id, "body": message.body, "attributes": message.message_attributes}
         for message in messages
     ]
-    # for message in messages:
-    #     print(f"Received message: {message.message_id}, {message.body}, {message.message_attributes}")
-    # message.delete()
-    # print(message.delete())
     return results
 
 
@@ -49,7 +55,3 @@ def delete_all_messages():
         for message in messages
     ]
     return results
-
-
-# TODO zamienic zeby uzywac tego modelu events tutaj faktyfcznie, sprawdz jak to robili w ksiazce
-# a potem druga apka
