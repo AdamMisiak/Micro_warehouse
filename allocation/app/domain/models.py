@@ -36,24 +36,12 @@ class Batch(Base):
         return self.sku == line.sku and int(self.quantity) >= int(line.quantity)
 
     def allocate(self, line: Order):
-
-        # CREATTE QUUEUE- CHYBA DZIALA - MOZE TEST FIFO?
-        # print(sqs_resource.create_queue(QueueName="micro-warehouse-external-queue",
-        #                                      Attributes={
-        #                                          'DelaySeconds': "0",
-        #                                          'VisibilityTimeout': "60"
-        #                                      }))
-
-        # TODO try to add event to queue there
-        # events.OutOfStock(line.sku)
-
         if self.can_allocate(line):
             self.quantity = int(self.quantity)
             self.quantity -= line.quantity
             line.batch = self
             return None
 
-        # print(asdict(events.OutOfStock(sku="BIG-TABLE")))
         queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
         attributes = {
             "event_type": {"DataType": "String", "StringValue": "OutOfStock"},
