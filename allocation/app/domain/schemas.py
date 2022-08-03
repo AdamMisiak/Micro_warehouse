@@ -52,6 +52,15 @@ class Queue(BaseModel):
         orm_mode = True
 
 
+class QueueCreate(BaseModel):
+    name: str
+    delay: int = 0
+    visibility: int = 60
+
+    class Config:
+        orm_mode = True
+
+
 class Message(BaseModel):
     id: str
     body: str
