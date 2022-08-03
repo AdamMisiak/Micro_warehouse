@@ -56,3 +56,12 @@ def delete_all_messages():
         for message in messages
     ]
     return results
+
+
+@router.post("/queues", response_model=schemas.Queue)
+def create_queue(queue: schemas.QueueCreate):
+    sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
+    queue = sqs_resource.create_queue(
+        QueueName=queue.name, Attributes={"DelaySeconds": str(queue.delay), "VisibilityTimeout": str(queue.visibility)}
+    )
+    return queue
