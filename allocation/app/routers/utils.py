@@ -1,6 +1,7 @@
-# pylint: disable=C0103
-# invalid-name
-from typing import List, Optional
+# pylint: disable=C0103, W0703
+# invalid-name, broad-except
+
+from typing import List
 
 import localstack_client.session as boto3
 from app.domain import schemas
@@ -19,7 +20,7 @@ def read_queue(queue_name: str):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
     try:
         queue = sqs_resource.get_queue_by_name(QueueName=queue_name)
-        return {"url": queue.url}
+        return {"url": queue.url, "attributes": queue.attributes}
     except Exception as exc:
         return {"error": "queue_does_not_exist", "msg": exc}
 
