@@ -53,3 +53,8 @@ class Batch(Base):
             MessageBody=body,
         )
         return {"event_type": body, "sku": self.sku}
+
+
+# NEW APP - STORAGE - WHEN THERE IS EVENT OUT OF STOCK IT WILL CREATE ANOTHER BATCH WITH NEW ID
+#
+# AND SEND EVENT BATCH CREATED?
