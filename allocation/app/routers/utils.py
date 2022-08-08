@@ -34,9 +34,9 @@ def read_queues():
 
 
 @router.get("/messages", response_model=List[schemas.Message])
-def read_messages():
+def read_messages(queue: str = "micro-warehouse-external-queue"):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
-    queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
+    queue = sqs_resource.get_queue_by_name(QueueName=queue)
     messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
     results = [
         {"id": message.message_id, "body": message.body, "attributes": message.message_attributes}
@@ -46,9 +46,9 @@ def read_messages():
 
 
 @router.delete("/messages", response_model=List[schemas.Message])
-def delete_all_messages():
+def delete_all_messages(queue: str = "micro-warehouse-external-queue"):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
-    queue = sqs_resource.get_queue_by_name(QueueName=settings.QUEUE_NAME)
+    queue = sqs_resource.get_queue_by_name(QueueName=queue)
     queue.purge()
     messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
     results = [
