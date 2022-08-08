@@ -46,6 +46,7 @@ class Batch(Base):
         attributes = {
             "event_type": {"DataType": "String", "StringValue": "OutOfStock"},
             "sku": {"DataType": "String", "StringValue": self.sku},
+            "quantity": {"DataType": "Number", "StringValue": str(line.quantity - self.quantity)},
         }
         body = "OutOfStock"
         queue.send_message(
@@ -53,8 +54,3 @@ class Batch(Base):
             MessageBody=body,
         )
         return {"event_type": body, "sku": self.sku}
-
-
-# NEW APP - STORAGE - WHEN THERE IS EVENT OUT OF STOCK IT WILL CREATE ANOTHER BATCH WITH NEW ID
-#
-# AND SEND EVENT BATCH CREATED?
