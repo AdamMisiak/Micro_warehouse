@@ -16,7 +16,6 @@ router = APIRouter(
 
 @router.post("/", response_model=schemas.Batch, tags=["Batches"])
 def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
-    # TODO can be moved to services or crud file
     db_batch = models.Batch(**batch.dict())
     db.add(db_batch)
     db.commit()
