@@ -42,3 +42,29 @@ class Order(OrderBase):
 
 class OrderWithBatch(Order):
     batch: Optional[Batch] = None
+
+
+# Utils
+class Queue(BaseModel):
+    url: str
+
+    class Config:
+        orm_mode = True
+
+
+class QueueCreate(BaseModel):
+    name: str
+    delay: int = 0
+    visibility: int = 60
+
+    class Config:
+        orm_mode = True
+
+
+class Message(BaseModel):
+    id: str
+    body: str
+    attributes: Optional[dict] = None
+
+    class Config:
+        orm_mode = True
