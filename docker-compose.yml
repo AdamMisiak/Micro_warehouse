@@ -78,12 +78,17 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - PYTHONDONTWRITEBYTECODE=1
+      - AWS_ACCESS_KEY_ID=micro_warehouse
+      - AWS_SECRET_ACCESS_KEY=micro_warehouse
+      - AWS_DEFAULT_REGION=eu-west-1
+      - LOCALSTACK_HOST=host.docker.internal
     volumes:
       # - ./allocation:/app
       - ./storage:/app
     entrypoint:
       - python
       - app/routers/event_consumer.py
+    restart: unless-stopped
 
 volumes:
   pg_data_allocation:
