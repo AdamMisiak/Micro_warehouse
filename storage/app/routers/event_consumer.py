@@ -17,6 +17,7 @@ def main():
         print(message)
         # TODO add sending email
         # TODO why messages are in queue event after receiving?
+        # TODO new branch testing? mailing?
 
 
 if __name__ == "__main__":
