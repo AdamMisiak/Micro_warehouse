@@ -1,8 +1,13 @@
+# pylint: disable=C0413, W0621, C0412, W0613, C0123, W0611
+# wrong-import-position, redefined-outer-name, ungrouped-imports
+# unused-argument, unidiomatic-typecheck, unused-import
 import os
 import sys
 from typing import Any, Generator
 
+import localstack_client.session as boto3
 import pytest
+from app.utils import settings
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -65,3 +70,12 @@ def client(app: FastAPI, db_session: SessionTesting) -> Generator[TestClient, An
     app.dependency_overrides[get_db] = _get_test_db
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture(scope="function")
+def queue():
+    """
+    Create a new AWS SQS.
+    """
+    sqs_client = boto3.client("sqs", region_name=settings.REGION)
+    sqs_client.create_queue(QueueName="micro-warehouse-external-queue")

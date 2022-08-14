@@ -17,4 +17,4 @@ down:
 	docker-compose down
 
 test: up-daemon
-	docker-compose run --rm --no-deps --entrypoint=pytest allocation
+	docker-compose run storage pytest -l -v -s
