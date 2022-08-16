@@ -4,7 +4,6 @@ from app.utils import settings
 
 def test_read_queues(client, queue):
     response = client.get("/api/v1/utils/queues")
-    print(response.json())
 
     assert response.status_code == 200
     assert type(response.json()) == list
