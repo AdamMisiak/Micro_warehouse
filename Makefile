@@ -17,4 +17,4 @@ down:
 	docker-compose down
 
 test: up-daemon
-	docker-compose run storage pytest -l -v -s
+	docker-compose run $(app) pytest -l -v -s
