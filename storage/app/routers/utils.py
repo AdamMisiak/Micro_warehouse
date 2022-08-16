@@ -15,8 +15,8 @@ router = APIRouter(
 )
 
 
-@router.get("/queue/{queue_name}")
-def read_queue(queue_name: str):
+@router.get("/queue")
+def read_queue(queue_name: str = "micro-warehouse-external-queue"):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
     try:
         queue = sqs_resource.get_queue_by_name(QueueName=queue_name)
@@ -34,9 +34,9 @@ def read_queues():
 
 
 @router.get("/messages", response_model=List[schemas.Message])
-def read_messages(queue: str = "micro-warehouse-external-queue"):
+def read_messages(queue_name: str = "micro-warehouse-external-queue"):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
-    queue = sqs_resource.get_queue_by_name(QueueName=queue)
+    queue = sqs_resource.get_queue_by_name(QueueName=queue_name)
     messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
     results = [
         {"id": message.message_id, "body": message.body, "attributes": message.message_attributes}
