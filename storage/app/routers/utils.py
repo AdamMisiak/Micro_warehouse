@@ -46,9 +46,9 @@ def read_messages(queue_name: str = "micro-warehouse-external-queue"):
 
 
 @router.delete("/messages", response_model=List[schemas.Message])
-def delete_all_messages(queue: str = "micro-warehouse-external-queue"):
+def delete_all_messages(queue_name: str = "micro-warehouse-external-queue"):
     sqs_resource = boto3.resource("sqs", region_name=settings.REGION)
-    queue = sqs_resource.get_queue_by_name(QueueName=queue)
+    queue = sqs_resource.get_queue_by_name(QueueName=queue_name)
     queue.purge()
     messages = queue.receive_messages(MessageAttributeNames=["All"], MaxNumberOfMessages=10, WaitTimeSeconds=1)
     results = [
