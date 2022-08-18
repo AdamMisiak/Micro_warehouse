@@ -17,12 +17,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # this is to include backend dir in sys.path so that we can import from db,main.py
 
 from app.database import Base, get_db
-from app.routers import utils
+from app.routers import batches, orders, utils
 
 
 def start_application():
     app = FastAPI()
     app.include_router(utils.router)
+    app.include_router(batches.router)
+    app.include_router(orders.router)
     return app
 
 
@@ -78,4 +80,4 @@ def queue():
     Create a new AWS SQS.
     """
     sqs_client = boto3.client("sqs", region_name=settings.REGION)
-    sqs_client.create_queue(QueueName="micro-warehouse-external-queue")
+    sqs_client.create_queue(QueueName=settings.QUEUE_NAME)
