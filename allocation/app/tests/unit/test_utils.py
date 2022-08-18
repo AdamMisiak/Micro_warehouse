@@ -12,7 +12,7 @@ def test_read_queues(client, queue):
 
 
 def test_read_queue(client, queue):
-    response = client.get("/api/v1/utils/queue", params={"queue_name": settings.QUEUE_NAME})
+    response = client.get(f"/api/v1/utils/queue/{settings.QUEUE_NAME}")
 
     assert response.status_code == 200
     assert isinstance(response.json(), dict)
