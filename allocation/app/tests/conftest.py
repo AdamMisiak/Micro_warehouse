@@ -7,6 +7,8 @@ from typing import Any, Generator
 
 import localstack_client.session as boto3
 import pytest
+from app.database import Base, get_db
+from app.routers import batches, orders, utils
 from app.utils import settings
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -15,9 +17,6 @@ from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # this is to include backend dir in sys.path so that we can import from db,main.py
-
-from app.database import Base, get_db
-from app.routers import batches, orders, utils
 
 
 def start_application():
@@ -81,3 +80,9 @@ def queue():
     """
     sqs_client = boto3.client("sqs", region_name=settings.REGION)
     sqs_client.create_queue(QueueName=settings.QUEUE_NAME)
+
+
+@pytest.fixture(scope="function")
+def batch(client):
+    body = {"sku": "BIG-TABLE", "reference": "batch1", "quantity": 10}
+    client.post("/api/v1/batches/", json=body)
