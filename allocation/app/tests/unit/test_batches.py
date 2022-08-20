@@ -30,6 +30,17 @@ def test_update_batch(client, batch):
     assert response_batch_info.json()["reference"] == body["reference"]
 
 
+def test_get_batch(client, batch):
+    response = client.get("/api/v1/batches/1")
+
+    assert response.status_code == 200
+    assert isinstance(response.json(), dict)
+    assert response.json().get("id") == 1
+    assert response.json().get("sku") == "BIG-TABLE"
+    assert response.json().get("reference") == "batch1"
+    assert response.json().get("quantity") == 10
+
+
 def test_get_batches(client, batch):
     response = client.get("/api/v1/batches")
 
