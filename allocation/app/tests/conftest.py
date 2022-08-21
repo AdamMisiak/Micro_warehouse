@@ -86,3 +86,9 @@ def queue():
 def batch(client):
     body = {"sku": "BIG-TABLE", "reference": "batch1", "quantity": 10}
     client.post("/api/v1/batches/", json=body)
+
+
+@pytest.fixture(scope="function")
+def order(client):
+    body = {"sku": "BIG-TABLE", "quantity": 10}
+    client.post("/api/v1/orders/", json=body)
