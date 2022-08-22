@@ -92,3 +92,9 @@ def batch(client):
 def order(client):
     body = {"sku": "BIG-TABLE", "quantity": 10}
     client.post("/api/v1/orders/", json=body)
+
+
+@pytest.fixture(scope="function")
+def order_wrong_quantity(client):
+    body = {"sku": "BIG-TABLE", "quantity": 20}
+    client.post("/api/v1/orders/", json=body)
